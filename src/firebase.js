@@ -27,4 +27,4 @@ const addWhisky = async (whisky) => {
   };
   
 
-export { db, addWhisky };
+export { app, db, addWhisky };
