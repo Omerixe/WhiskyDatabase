@@ -19,12 +19,12 @@ const AppContent = () => {
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" style={{ flexGrow: 1 }}>
-            Whisky Database
+            Whisky Datenbank
           </Typography>
           {currentUser ? (
             <>
               <Button color="inherit" component={Link} to="/">Home</Button>
-              <Button color="inherit" component={Link} to="/add">Add Whisky</Button>
+              <Button color="inherit" component={Link} to="/add">Whisky Hinzufügen</Button>
               <Button color="inherit" onClick={logout}>Logout</Button>
             </>
           ) : (

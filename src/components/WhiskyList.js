@@ -21,7 +21,7 @@ const WhiskyList = () => {
   return (
     <div>
       <Typography variant="h4" gutterBottom>
-        Whisky List
+        Übersicht
       </Typography>
       <Grid container spacing={2}>
         {whiskies.map(whisky => (

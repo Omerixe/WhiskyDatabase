@@ -27,14 +27,14 @@ const AddWhisky = () => {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
       <Typography variant="h4" gutterBottom>
-        Add New Whisky
+        Whisky hinzufügen
       </Typography>
       <TextField label="Name" value={name} onChange={(e) => setName(e.target.value)} />
       <TextField label="Alter" type="number" value={age} onChange={(e) => setAge(e.target.value)} />
       <TextField label="Destillerie" value={distillery} onChange={(e) => setDistillery(e.target.value)} />
       <TextField label="Typ" value={type} onChange={(e) => setType(e.target.value)} />
       <TextField label="Region" value={region} onChange={(e) => setRegion(e.target.value)} />
-      <Button variant="contained" color="primary" onClick={handleSubmit}>Add Whisky</Button>
+      <Button variant="contained" color="primary" onClick={handleSubmit}>Whisky Hinzufügen</Button>
     </Box>
   );
 };
