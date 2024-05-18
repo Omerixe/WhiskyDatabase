@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { AuthProvider, useAuth } from './AuthContext';
 import WhiskyList from './components/WhiskyList';
 import AddWhisky from './components/AddWhisky';
+import WhiskyDetail from './components/WhiskyDetail';
 import Login from './components/Login';
 import Container from '@mui/material/Container';
 import AppBar from '@mui/material/AppBar';
@@ -36,6 +37,7 @@ const AppContent = () => {
         <Routes>
           <Route path="/" element={currentUser ? <WhiskyList /> : <Login />} />
           <Route path="/add" element={currentUser ? <AddWhisky /> : <Login />} />
+          <Route path="/whisky/:id" element={currentUser ? <WhiskyDetail /> : <Login />} />
           <Route path="/login" element={<Login />} />
         </Routes>
       </Container>
