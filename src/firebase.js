@@ -1,7 +1,7 @@
 // src/firebase.js
-import { collection, addDoc } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -18,6 +18,9 @@ const app = initializeApp(firebaseConfig);
 // Initialize Firestore
 const db = getFirestore(app);
 
+// Initialize Storage
+const storage = getStorage(app);
+
 const addWhisky = async (whisky) => {
     try {
       await addDoc(collection(db, "whiskies"), whisky);
@@ -26,5 +29,4 @@ const addWhisky = async (whisky) => {
     }
   };
   
-
-export { app, db, addWhisky };
+export { app, db, storage, addWhisky };
