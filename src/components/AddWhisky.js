@@ -1,7 +1,7 @@
 // src/components/AddWhisky.js
 import React, { useState, useEffect } from 'react';
 import { db, storage, addWhisky } from '../firebase';
-import { collection, getDocs, addDoc } from 'firebase/firestore';
+import { collection, getDocs, setDoc, doc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -40,8 +40,8 @@ const AddWhisky = () => {
 
     if (!distilleryId && newDistillery) {
       // Add the new distillery to Firestore
-      const docRef = await addDoc(collection(db, 'distilleries'), { name: newDistillery });
-      distilleryId = docRef.id;
+      await setDoc(doc(db, 'distilleries', newDistillery), {name: newDistillery});
+      distilleryId = newDistillery;
     }
 
     let imageUrl = '';
