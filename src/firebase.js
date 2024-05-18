@@ -1,6 +1,7 @@
 // src/firebase.js
-import firebase from 'firebase/app';
-import 'firebase/firestore';
+import { collection, addDoc } from "firebase/firestore";
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -11,8 +12,19 @@ const firebaseConfig = {
     appId: process.env.REACT_APP_FIREBASE_APP_ID,
   };
 
-firebase.initializeApp(firebaseConfig);
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
-const db = firebase.firestore();
+// Initialize Firestore
+const db = getFirestore(app);
 
-export { db };
+const addWhisky = async (whisky) => {
+    try {
+      await addDoc(collection(db, "whiskies"), whisky);
+    } catch (error) {
+      console.error("Error adding whisky: ", error);
+    }
+  };
+  
+
+export { db, addWhisky };
