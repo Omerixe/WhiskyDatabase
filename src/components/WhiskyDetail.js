@@ -92,6 +92,7 @@ const WhiskyDetail = () => {
   };
 
   const handleDeleteClick = async () => {
+    //Todo: Delete image as well
     const docRef = doc(db, 'whiskies', id);
     await docRef.delete();
     navigate('/');
@@ -101,6 +102,7 @@ const WhiskyDetail = () => {
     return <Typography>Loading...</Typography>;
   }
 
+  //Todo: Add option to choose the distillery from the dropdown
   return (
     <Card css={cardStyle}>
       {whisky.imageUrl && (
