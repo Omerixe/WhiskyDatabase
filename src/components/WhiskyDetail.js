@@ -46,8 +46,6 @@ const WhiskyDetail = () => {
         distillery: '',
         type: '',
         region: '',
-        abv: '',
-        rating: '',
     });
 
     useEffect(() => {
@@ -84,8 +82,6 @@ const WhiskyDetail = () => {
         await updateDoc(docRef, {
             ...formValues,
             age: parseInt(formValues.age, 10),
-            abv: parseFloat(formValues.abv),
-            rating: parseInt(formValues.rating, 10),
         });
         setWhisky({ ...formValues });
         setIsEditing(false);
