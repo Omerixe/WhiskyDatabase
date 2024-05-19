@@ -10,7 +10,7 @@ const firebaseConfig = {
     storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
     messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
     appId: process.env.REACT_APP_FIREBASE_APP_ID,
-  };
+};
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -23,10 +23,10 @@ const storage = getStorage(app);
 
 const addWhisky = async (whisky) => {
     try {
-      await addDoc(collection(db, "whiskies"), whisky);
+        await addDoc(collection(db, "whiskies"), whisky);
     } catch (error) {
-      console.error("Error adding whisky: ", error);
+        console.error("Error adding whisky: ", error);
     }
-  };
-  
+};
+
 export { app, db, storage, addWhisky };
