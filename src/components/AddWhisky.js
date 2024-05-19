@@ -14,7 +14,9 @@ const AddWhisky = () => {
   const [age, setAge] = useState('');
   const [distillery, setDistillery] = useState(null);
   const [type, setType] = useState('');
-  const [region, setRegion] = useState('');
+  const [regions, setRegions] = useState([]);
+  const [region, setRegion] = useState(null);
+  const [newRegion, setNewRegion] = useState('');
   const [distilleries, setDistilleries] = useState([]);
   const [newDistillery, setNewDistillery] = useState('');
   const [image, setImage] = useState(null);
@@ -26,6 +28,12 @@ const AddWhisky = () => {
       setDistilleries(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     };
     fetchDistilleries();
+
+    const fetchRegions = async () => {
+      const snapshot = await getDocs(collection(db, 'regions'));
+      setRegions(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    }
+    fetchRegions();
   }, []);
 
   const handleImageChange = (e) => {
@@ -37,11 +45,18 @@ const AddWhisky = () => {
 
   const handleSubmit = async () => {
     let distilleryId = distillery ? distillery.id : null;
+    let regionId = region ? region.id : null;
 
     if (!distilleryId && newDistillery) {
       // Add the new distillery to Firestore
       await setDoc(doc(db, 'distilleries', newDistillery), {name: newDistillery});
       distilleryId = newDistillery;
+    }
+
+    if (!regionId && newRegion) {
+        // Add the new region to Firestore
+        await setDoc(doc(db, 'regions', newRegion), {name: newRegion});
+        regionId = newRegion;
     }
 
     let imageUrl = '';
@@ -56,7 +71,7 @@ const AddWhisky = () => {
       age: parseInt(age),
       distillery: distilleryId,
       type,
-      region,
+      region: regionId,
       imageUrl,
     };
 
@@ -66,6 +81,7 @@ const AddWhisky = () => {
     setAge('');
     setDistillery(null);
     setNewDistillery('');
+    setNewRegion('');
     setType('');
     setRegion('');
     setImage(null);
@@ -90,7 +106,16 @@ const AddWhisky = () => {
         onInputChange={(_, newInputValue) => setNewDistillery(newInputValue)}
       />
       <TextField label="Typ" value={type} onChange={(e) => setType(e.target.value)} required />
-      <TextField label="Region" value={region} onChange={(e) => setRegion(e.target.value)} required />
+      <Autocomplete
+        options={regions}
+        getOptionLabel={(option) => option.name}
+        value={region}
+        onChange={(_, newValue) => setRegion(newValue)}
+        renderInput={(params) => <TextField {...params} label="Region" />}
+        freeSolo
+        inputValue={newRegion}
+        onInputChange={(_, newInputValue) => setNewRegion(newInputValue)}
+      />
       <Button variant="contained" component="label">
         Bild hochladen
         <input type="file" hidden onChange={handleImageChange} />
