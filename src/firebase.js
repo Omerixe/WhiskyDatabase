@@ -1,6 +1,6 @@
 // src/firebase.js
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
+import { getFirestore, collection, addDoc, query, where, getDocs} from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
@@ -29,4 +29,13 @@ const addWhisky = async (whisky) => {
     }
 };
 
-export { app, db, storage, addWhisky };
+const fetchDistilleries = async (region = undefined, newDistilleries) => {
+    let distilleryQuery = collection(db, 'distilleries');
+    if (region) {
+        distilleryQuery = query(distilleryQuery, where('region', '==', region));
+    }
+    const snapshot = await getDocs(distilleryQuery);
+    newDistilleries(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+};
+
+export { app, db, storage, addWhisky, fetchDistilleries };
