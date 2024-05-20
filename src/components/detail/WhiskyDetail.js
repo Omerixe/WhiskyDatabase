@@ -87,20 +87,17 @@ const WhiskyDetail = () => {
                                 component="img"
                                 css={mediaStyle}
                                 image={whisky.imageUrl}
-                                alt={whisky.name}
+                                alt={"Image of " + whisky.distillery}
                             />
                         )}
                         <ContentBox>
                             <CardContent>
                                 <>
                                     <Typography variant="h4" component="div">
-                                        {whisky.name}
+                                    {whisky.distillery}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
                                         Age: {whisky.age}
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                        Distillery: {whisky.distillery}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
                                         Region: {whisky.region}

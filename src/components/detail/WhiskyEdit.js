@@ -54,14 +54,6 @@ const WhiskyEdit = ({ whisky, editingDone }) => {
             <ContentBox>
                 <CardContent>
                     <TextField
-                        label="Name"
-                        name="name"
-                        value={formValues.name}
-                        onChange={handleChange}
-                        fullWidth
-                        margin="normal"
-                    />
-                    <TextField
                         label="Age"
                         name="age"
                         type="number"

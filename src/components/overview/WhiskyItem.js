@@ -15,7 +15,7 @@ const WhiskyItem = ({ whisky }) => (
                     <CardMedia
                         component="img"
                         image={whisky.imageUrl}
-                        alt={whisky.name}
+                        alt={"Image of " + whisky.distillery}
                         style={{ height: '100%', width: '100%', objectFit: 'cover' }}
                     />
                 </Grid>
@@ -23,13 +23,10 @@ const WhiskyItem = ({ whisky }) => (
             <Grid item xs={whisky.imageUrl ? 8 : 12}>
                 <CardContent>
                     <Typography variant="h5" component="div">
-                        {whisky.name}
+                        {whisky.distillery}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
                         Alter: {whisky.age}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                        Destillerie: {whisky.distillery}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
                         Region: {whisky.region}

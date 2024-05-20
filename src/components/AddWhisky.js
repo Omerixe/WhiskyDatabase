@@ -12,7 +12,6 @@ import DistilleryInput from './DistilleryInput';
 import RegionInput from './RegionInput';
 
 const AddWhisky = () => {
-    const [name, setName] = useState('');
     const [age, setAge] = useState('');
     const [region, setRegion] = useState(null);
     const [distillery, setDistillery] = useState(null);
@@ -62,7 +61,6 @@ const AddWhisky = () => {
         }
 
         const newWhisky = {
-            name,
             age: parseInt(age),
             distillery: distilleryId,
             region: regionId,
@@ -71,7 +69,6 @@ const AddWhisky = () => {
 
         await addWhisky(newWhisky);
 
-        setName('');
         setAge('');
         setDistillery(null);
         setRegion(null);
@@ -84,7 +81,6 @@ const AddWhisky = () => {
             <Typography variant="h4" gutterBottom>
                 Whisky hinzufügen
             </Typography>
-            <TextField label="Name" value={name} onChange={(e) => setName(e.target.value)} required />
             <TextField label="Alter" type="number" value={age} onChange={(e) => setAge(e.target.value)} required />
             <DistilleryInput 
                 inputDistillery={distillery}
