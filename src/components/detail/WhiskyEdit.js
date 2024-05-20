@@ -63,14 +63,6 @@ const WhiskyEdit = ({ whisky, editingDone }) => {
                         margin="normal"
                     />
                     <TextField
-                        label="Distillery"
-                        name="distillery"
-                        value={formValues.distillery}
-                        onChange={handleChange}
-                        fullWidth
-                        margin="normal"
-                    />
-                    <TextField
                         label="Region"
                         name="region"
                         value={formValues.region}

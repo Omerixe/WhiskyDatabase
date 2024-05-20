@@ -1,7 +1,7 @@
 // src/components/AddWhisky.js
 import React, { useState, useEffect } from 'react';
 import { db, storage, addWhisky } from '../firebase';
-import { setDoc, doc, Timestamp} from 'firebase/firestore';
+import { setDoc, doc, updateDoc, Timestamp} from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -15,7 +15,7 @@ import { InputAdornment } from '@mui/material';
 import SeriesInput from './inputs/SeriesInput';
 import BottlerInput from './inputs/BottlerInput';
 
-const AddWhisky = () => {
+const AddWhisky = ({whisky, editingDone}) => {
     const [age, setAge] = useState(''); 
     const [abv, setAbv] = useState('');
     const [distilledDate, setDistilledDate] = useState('');
@@ -30,6 +30,24 @@ const AddWhisky = () => {
     const [distillery, setDistillery] = useState(null);
     const [image, setImage] = useState(null);
     const [imagePreviewUrl, setImagePreviewUrl] = useState('');
+
+    useEffect(() => {   
+        if (whisky) {
+            setAge(whisky.age ? whisky.age.toString() : '');
+            setAbv(whisky.abv ? whisky.abv.toString() : '');
+            setDistilledDate(whisky.distilledDate ? whisky.distilledDate : '');
+            setBottledDate(whisky.bottledDate ? whisky.bottledDate : '');
+            setBarrelNo(whisky.barrelNo ? whisky.barrelNo : '');
+            setBottleNo(whisky.bottleNo ? whisky.bottleNo : '');
+            setStatus(whisky.status ? whisky.status : '');
+            setComment(whisky.comment ? whisky.comment : '');
+            setBottler(whisky.bottler ? whisky.bottler : '');
+            setSeries(whisky.series ? whisky.series : '');
+            setRegion(whisky.region ? whisky.region : null);
+            setDistillery(whisky.distillery ? whisky.distillery : null);
+            setImagePreviewUrl(whisky.imageUrl ? whisky.imageUrl : '');
+        }
+    }, [whisky]);
 
     const handleDistilleryChange = (distillery) => {
         setDistillery(distillery);
@@ -93,39 +111,46 @@ const AddWhisky = () => {
             region: regionId,
             imageUrl,
             abv: parseFloat(abv),
-            distilledDate: distilledDate ? Timestamp.fromDate(new Date(distilledDate)) : null,
-            bottledDate: bottledDate ? Timestamp.fromDate(new Date(bottledDate)) : null,
+            distilledDate: distilledDate ? distilledDate : null,
+            bottledDate: bottledDate ? bottledDate : null,
             barrelNo,
             bottleNo,
             status,
             comment,
             bottler,
             series,
-            createdAt: Timestamp.now(),
+            creationDate: whisky ? whisky.creationDate : Date.now().toString(),
+            lastUpdateDate: Date.now().toString(),
         };
 
-        await addWhisky(newWhisky);
+        if (editingDone) {
+            const docRef = doc(db, 'whiskies', whisky.id);
+            await updateDoc(docRef, newWhisky);
+            editingDone();
+        } else {
+            await addWhisky(newWhisky);
 
-        setAge('');
-        setDistillery(null);
-        setRegion(null);
-        setImage(null);
-        setImagePreviewUrl('');
-        setAbv(''); 
-        setDistilledDate(''); 
-        setBottledDate(''); 
-        setBarrelNo(''); 
-        setBottleNo(''); 
-        setStatus(''); 
-        setComment(''); 
-        setBottler(''); 
-        setSeries('');
+            setAge('');
+            setDistillery(null);
+            setRegion(null);
+            setImage(null);
+            setImagePreviewUrl('');
+            setAbv(''); 
+            setDistilledDate(''); 
+            setBottledDate(''); 
+            setBarrelNo(''); 
+            setBottleNo(''); 
+            setStatus(''); 
+            setComment(''); 
+            setBottler(''); 
+            setSeries('');
+        }
     };
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <Typography variant="h4" gutterBottom>
-                Whisky hinzufügen
+                {whisky ? "Whisky bearbeiten" : "Whisky hinzufügen"}
             </Typography>
             <DistilleryInput 
                 inputDistillery={distillery}
@@ -171,7 +196,8 @@ const AddWhisky = () => {
             {imagePreviewUrl && (
                 <img src={imagePreviewUrl} alt="Image Preview" style={{ maxWidth: '100%', maxHeight: '300px', marginTop: '10px' }} />
             )}
-            <Button variant="contained" color="primary" onClick={handleSubmit}>Add Whisky</Button>
+            <Button variant="contained" color="primary" onClick={handleSubmit}>{editingDone ? "Update speichern" : "Whisky hinzufügen" }</Button>
+            {editingDone && <Button variant="contained" color="secondary" onClick={editingDone}>Abbrechen</Button>}
         </Box>
     );
 };

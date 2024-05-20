@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import Box from '@mui/material/Box';
-import WhiskyEdit from './WhiskyEdit';
+import AddWhisky from '../AddWhisky';
 
 const cardStyle = css`
   max-width: 600px;
@@ -79,7 +79,7 @@ const WhiskyDetail = () => {
         <>
             {
                 isEditing ? (
-                    <WhiskyEdit whisky={whisky} editingDone={editingDone} />
+                    <AddWhisky whisky={whisky} editingDone={editingDone} />
                 ) : (
                     <Card css={cardStyle}>
                         {whisky.imageUrl && (
