@@ -1,13 +1,14 @@
 // src/components/AddWhisky.js
 import React, { useState, useEffect } from 'react';
-import { db, storage, addWhisky, fetchDistilleries } from '../firebase';
-import { collection, getDocs, setDoc, doc, where, query } from 'firebase/firestore';
+import { db, storage, addWhisky } from '../firebase';
+import { collection, getDocs, setDoc, doc} from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Autocomplete from '@mui/material/Autocomplete';
+import DistilleryInput from './DistilleryInput';
 
 const AddWhisky = () => {
     const [name, setName] = useState('');
@@ -15,38 +16,21 @@ const AddWhisky = () => {
     const [regions, setRegions] = useState([]);
     const [selectedRegion, setRegion] = useState(null);
     const [newRegion, setNewRegion] = useState('');
-    const [distilleries, setDistilleries] = useState([]);
-    const [selectedDistillery, setDistillery] = useState(null);
-    const [newDistillery, setNewDistillery] = useState('');
+    const [distillery, setDistillery] = useState(null);
     const [image, setImage] = useState(null);
     const [imagePreviewUrl, setImagePreviewUrl] = useState('');
 
-    const loadDistilleries = async (region = undefined) => {
-        const loadedDistilleries = await fetchDistilleries(region, setDistilleries);
-        setDistilleries(loadedDistilleries);
-        if (region && selectedDistillery && !loadedDistilleries.includes(selectedDistillery)) {
-            resetDistillery();
-        }
-    };
-
-    const resetDistillery = () => {
-        setDistillery(null);
-        setNewDistillery('');
-    };
-
     const handleRegionChange = (newRegion) => {
-        loadDistilleries(newRegion);
         setNewRegion(newRegion);
     };
 
-    const handleDistilleryChange = (newDistillery) => {
-        setNewDistillery(newDistillery);
-        setNewRegion(distilleries.find(d => d.id === newDistillery)?.region || '');
+    const handleDistilleryChange = (distillery) => {
+        setDistillery(distillery);
+        const distilleryId = distillery ? (distillery.id ? distillery.id : null) : null;
+        if (distilleryId) {
+            setNewRegion(distillery.region);
+        }
     }
-
-    useEffect(() => {
-        loadDistilleries();
-    }, []);
 
     useEffect(() => {
         const fetchRegions = async () => {
@@ -64,13 +48,12 @@ const AddWhisky = () => {
     };
 
     const handleSubmit = async () => {
-        let distilleryId = selectedDistillery ? selectedDistillery.id : null;
+        let distilleryId = distillery.id ? distillery.id : null;
         let regionId = selectedRegion ? selectedRegion.id : null;
 
-        if (!distilleryId && newDistillery) {
+        if (!distilleryId && distillery) {
             // Add the new distillery to Firestore
-            await setDoc(doc(db, 'distilleries', newDistillery), { name: newDistillery });
-            distilleryId = newDistillery;
+            await setDoc(doc(db, 'distilleries', distillery), { name: distillery });
         }
 
         if (!regionId && newRegion) {
@@ -99,7 +82,6 @@ const AddWhisky = () => {
         setName('');
         setAge('');
         setDistillery(null);
-        setNewDistillery('');
         setNewRegion('');
         setRegion('');
         setImage(null);
@@ -113,15 +95,10 @@ const AddWhisky = () => {
             </Typography>
             <TextField label="Name" value={name} onChange={(e) => setName(e.target.value)} required />
             <TextField label="Alter" type="number" value={age} onChange={(e) => setAge(e.target.value)} required />
-            <Autocomplete
-                options={distilleries}
-                getOptionLabel={(option) => option.name}
-                value={selectedDistillery}
-                onChange={(_, newValue) => setDistillery(newValue)}
-                renderInput={(params) => <TextField {...params} label="Destillerie" />}
-                freeSolo
-                inputValue={newDistillery}
-                onInputChange={(_, newInputValue) => handleDistilleryChange(newInputValue)}
+            <DistilleryInput 
+                freeInputAllowed={true} 
+                region={selectedRegion} 
+                handleDistilleryChange={handleDistilleryChange} 
             />
             <Autocomplete
                 options={regions}
