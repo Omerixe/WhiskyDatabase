@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { AuthProvider, useAuth } from './AuthContext';
 import WhiskyList from './components/overview/WhiskyList';
 import AddWhisky from './components/AddWhisky';
-import WhiskyDetail from './components/WhiskyDetail';
+import WhiskyDetail from './components/detail/WhiskyDetail';
 import Login from './components/Login';
 import Container from '@mui/material/Container';
 import AppBar from '@mui/material/AppBar';
