@@ -5,6 +5,8 @@ import Grid from '@mui/material/Grid';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import { statusConstants } from '../../constants';
+import MenuItem from '@mui/material/MenuItem';
 
 const WhiskyFilter = (updateFunction) => {
     const [distilleries, setDistilleries] = useState([]);
@@ -15,6 +17,7 @@ const WhiskyFilter = (updateFunction) => {
     const [selectedSeries, setSelectedSeries] = useState(null);
     const [bottlers, setBottlers] = useState([]);
     const [selectedBottler, setSelectedBottler] = useState(null);
+    const [status, setStatus] = useState('');
 
     useEffect(() => {
         loadDistilleries();
@@ -67,11 +70,14 @@ const WhiskyFilter = (updateFunction) => {
             if (selectedBottler) {
                 whiskyQuery = query(whiskyQuery, where('bottler', '==', selectedBottler.id));
             }
+            if (status) {
+                whiskyQuery = query(whiskyQuery, where('status', '==', status));
+            }
             const snapshot = await getDocs(whiskyQuery);
             updateFunction.updateWhiskyList(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
         };
         fetchWhiskies();
-    }, [selectedDistillery, selectedRegion, selectedSeries, selectedBottler]);
+    }, [selectedDistillery, selectedRegion, selectedSeries, selectedBottler, status]);
 
     const resetFilters = () => {
         setSelectedDistillery(null);
@@ -124,6 +130,15 @@ const WhiskyFilter = (updateFunction) => {
                     }}
                     renderInput={(params) => <TextField {...params} label="Abfüller" />}
                 />
+            </Grid>
+            <Grid item xs={12} md={6}>
+                <TextField label="Status" value={status} onChange={(e) => setStatus(e.target.value)} fullWidth select>
+                    {statusConstants.map((option) => (  
+                        <MenuItem key={option} value={option}>
+                            {option}
+                        </MenuItem>
+                    ))}
+                </TextField>
             </Grid>
             <Grid item xs={12} md={6}>
                 <Button variant="contained" color="primary" onClick={resetFilters}>Filter zurücksetzen</Button>
