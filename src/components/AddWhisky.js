@@ -87,6 +87,7 @@ const AddWhisky = () => {
             <TextField label="Name" value={name} onChange={(e) => setName(e.target.value)} required />
             <TextField label="Alter" type="number" value={age} onChange={(e) => setAge(e.target.value)} required />
             <DistilleryInput 
+                inputDistillery={distillery}
                 freeInputAllowed={true} 
                 region={region} 
                 handleDistilleryChange={handleDistilleryChange} 

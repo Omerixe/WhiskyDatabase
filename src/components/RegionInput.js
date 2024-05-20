@@ -10,16 +10,6 @@ const RegionInput = ({ freeInputAllowed, inputRegion, handleRegionChange }) => {
     const [selectedRegion, setSelectedRegion] = useState(null);
     const [newRegion, setNewRegion] = useState('');
 
-    const handleRegionSelection = (newRegion) => {
-        setSelectedRegion(newRegion);
-        handleRegionChange(newRegion);
-    };
-
-    const handleNewRegion = (newRegion) => {
-        setNewRegion(newRegion);
-        handleRegionChange(newRegion);
-    };
-
     useEffect(() => {
         const fetchRegions = async () => {
             const snapshot = await getDocs(collection(db, 'regions'));
@@ -31,16 +21,18 @@ const RegionInput = ({ freeInputAllowed, inputRegion, handleRegionChange }) => {
     useEffect(() => {
         if (inputRegion) {
             if (inputRegion.id) {
-                if (inputRegion.id != selectedRegion?.id) {
-                    handleRegionSelection(inputRegion);
-                }
+                setSelectedRegion(inputRegion);
             } else {
                 if (regions.some(region => region.name === inputRegion)) {
-                    handleRegionSelection(regions.find(region => region.name === inputRegion));
-                } else if (inputRegion != newRegion) {
-                    handleNewRegion(inputRegion);
+                    setSelectedRegion(regions.find(region => region.name === inputRegion));
+                    setNewRegion(inputRegion);
+                } else {
+                    setNewRegion(inputRegion);
                 }
             }
+        } else {
+            setNewRegion('');
+            setSelectedRegion(null);
         }
     }, [inputRegion]);
 
@@ -49,11 +41,11 @@ const RegionInput = ({ freeInputAllowed, inputRegion, handleRegionChange }) => {
             options={regions}
             getOptionLabel={(option) => option.name}
             value={selectedRegion}
-            onChange={(_, newValue) => handleRegionSelection(newValue)}
+            onChange={(_, newValue) => handleRegionChange(newValue)}
             renderInput={(params) => <TextField {...params} label="Region" />}
             freeSolo={freeInputAllowed}
             inputValue={newRegion}
-            onInputChange={(_, newInputValue) => handleNewRegion(newInputValue)}
+            onInputChange={(_, newInputValue) => handleRegionChange(newInputValue)}
         />
     );
 };
