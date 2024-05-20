@@ -12,11 +12,11 @@ import Autocomplete from '@mui/material/Autocomplete';
 const AddWhisky = () => {
     const [name, setName] = useState('');
     const [age, setAge] = useState('');
-    const [selectedDistillery, setDistillery] = useState(null);
     const [regions, setRegions] = useState([]);
     const [selectedRegion, setRegion] = useState(null);
     const [newRegion, setNewRegion] = useState('');
     const [distilleries, setDistilleries] = useState([]);
+    const [selectedDistillery, setDistillery] = useState(null);
     const [newDistillery, setNewDistillery] = useState('');
     const [image, setImage] = useState(null);
     const [imagePreviewUrl, setImagePreviewUrl] = useState('');
