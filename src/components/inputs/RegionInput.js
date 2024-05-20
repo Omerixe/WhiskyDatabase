@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../firebase';
+import { db } from '../../firebase';
 import { collection, getDocs} from 'firebase/firestore';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';

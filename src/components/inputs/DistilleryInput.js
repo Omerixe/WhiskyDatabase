@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchDistilleries } from '../firebase';
+import { fetchDistilleries } from '../../firebase';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 

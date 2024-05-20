@@ -7,13 +7,13 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import DistilleryInput from './DistilleryInput';
-import RegionInput from './RegionInput';
+import DistilleryInput from './inputs/DistilleryInput';
+import RegionInput from './inputs/RegionInput';
 import MenuItem from '@mui/material/MenuItem';
 import { statusConstants } from '../constants';
 import { InputAdornment } from '@mui/material';
-import SeriesInput from './SeriesInput';
-import BottlerInput from './BottlerInput';
+import SeriesInput from './inputs/SeriesInput';
+import BottlerInput from './inputs/BottlerInput';
 
 const AddWhisky = () => {
     const [age, setAge] = useState(''); 
