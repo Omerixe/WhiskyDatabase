@@ -13,6 +13,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { statusConstants } from '../constants';
 import { InputAdornment } from '@mui/material';
 import SeriesInput from './SeriesInput';
+import BottlerInput from './BottlerInput';
 
 const AddWhisky = () => {
     const [age, setAge] = useState(''); 
@@ -53,6 +54,7 @@ const AddWhisky = () => {
         let distilleryId = distillery.id ? distillery.id : null;
         let regionId = region.id ? region.id : null;
         let seriesId = series.id ? series.id : null;
+        let bottlerId = bottler.id ? bottler.id : null;
 
         if (!distilleryId && distillery) {
             // Add the new distillery to Firestore
@@ -70,6 +72,12 @@ const AddWhisky = () => {
             // Add the new series to Firestore
             await setDoc(doc(db, 'series', series), { name: series });
             seriesId = series;
+        }
+
+        if (!bottlerId && bottler) {
+            // Add the new bottler to Firestore
+            await setDoc(doc(db, 'bottlers', bottler), { name: bottler });
+            bottlerId = bottler;
         }
 
         let imageUrl = '';
@@ -130,7 +138,11 @@ const AddWhisky = () => {
                 inputRegion={region} 
                 handleRegionChange={setRegion} 
             />
-            <TextField label="Bottler" value={bottler} onChange={(e) => setBottler(e.target.value)} />
+            <BottlerInput
+                freeInputAllowed={true}
+                inputBottler={bottler}
+                handleBottlerChange={setBottler}
+            />
             <SeriesInput
                 freeInputAllowed={true}
                 inputSeries={series}
