@@ -2,7 +2,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { AuthProvider, useAuth } from './AuthContext';
-import WhiskyList from './components/WhiskyList';
+import WhiskyList from './components/overview/WhiskyList';
 import AddWhisky from './components/AddWhisky';
 import WhiskyDetail from './components/WhiskyDetail';
 import Login from './components/Login';
