@@ -1,18 +1,29 @@
 // src/components/AddWhisky.js
 import React, { useState, useEffect } from 'react';
 import { db, storage, addWhisky } from '../firebase';
-import { collection, getDocs, setDoc, doc} from 'firebase/firestore';
+import { setDoc, doc, Timestamp} from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Autocomplete from '@mui/material/Autocomplete';
 import DistilleryInput from './DistilleryInput';
 import RegionInput from './RegionInput';
+import MenuItem from '@mui/material/MenuItem';
+import { statusConstants } from '../constants';
+import { InputAdornment } from '@mui/material';
 
 const AddWhisky = () => {
-    const [age, setAge] = useState('');
+    const [age, setAge] = useState(''); 
+    const [abv, setAbv] = useState('');
+    const [distilledDate, setDistilledDate] = useState('');
+    const [bottledDate, setBottledDate] = useState('');
+    const [barrelNo, setBarrelNo] = useState('');
+    const [bottleNo, setBottleNo] = useState('');
+    const [status, setStatus] = useState('');
+    const [comment, setComment] = useState('');
+    const [bottler, setBottler] = useState('');
+    const [series, setSeries] = useState('');
     const [region, setRegion] = useState(null);
     const [distillery, setDistillery] = useState(null);
     const [image, setImage] = useState(null);
@@ -65,6 +76,16 @@ const AddWhisky = () => {
             distillery: distilleryId,
             region: regionId,
             imageUrl,
+            abv: parseFloat(abv),
+            distilledDate: distilledDate ? Timestamp.fromDate(new Date(distilledDate)) : null,
+            bottledDate: bottledDate ? Timestamp.fromDate(new Date(bottledDate)) : null,
+            barrelNo,
+            bottleNo,
+            status,
+            comment,
+            bottler,
+            series,
+            createdAt: Timestamp.now(),
         };
 
         await addWhisky(newWhisky);
@@ -74,6 +95,15 @@ const AddWhisky = () => {
         setRegion(null);
         setImage(null);
         setImagePreviewUrl('');
+        setAbv(''); 
+        setDistilledDate(''); 
+        setBottledDate(''); 
+        setBarrelNo(''); 
+        setBottleNo(''); 
+        setStatus(''); 
+        setComment(''); 
+        setBottler(''); 
+        setSeries('');
     };
 
     return (
@@ -81,7 +111,6 @@ const AddWhisky = () => {
             <Typography variant="h4" gutterBottom>
                 Whisky hinzufügen
             </Typography>
-            <TextField label="Alter" type="number" value={age} onChange={(e) => setAge(e.target.value)} required />
             <DistilleryInput 
                 inputDistillery={distillery}
                 freeInputAllowed={true} 
@@ -93,6 +122,24 @@ const AddWhisky = () => {
                 inputRegion={region} 
                 handleRegionChange={setRegion} 
             />
+            <TextField label="Bottler" value={bottler} onChange={(e) => setBottler(e.target.value)} />
+            <TextField label="Series" value={series} onChange={(e) => setSeries(e.target.value)} />
+            <TextField label="Alter" type="number" value={age} onChange={(e) => setAge(e.target.value)} required />
+            <TextField label="Alc. Vol" value={abv} onChange={(e) => setAbv(e.target.value)} required InputProps={{
+                endAdornment: <InputAdornment position="end">%</InputAdornment>,
+          }} />
+            <TextField label="Status" value={status} onChange={(e) => setStatus(e.target.value)} required select>
+                {statusConstants.map((option) => (  
+                    <MenuItem key={option} value={option}>
+                        {option}
+                    </MenuItem>
+                ))}
+            </TextField>
+            <TextField label="Destilliert am" type="date" value={distilledDate} onChange={(e) => setDistilledDate(e.target.value)} InputLabelProps={{ shrink: true }}/>
+            <TextField label="Abgefüllt am" type="date" value={bottledDate} onChange={(e) => setBottledDate(e.target.value)} InputLabelProps={{ shrink: true }}/>
+            <TextField label="Fass Nr" value={barrelNo} onChange={(e) => setBarrelNo(e.target.value)} />
+            <TextField label="Flasche Nr" type="number" value={bottleNo} onChange={(e) => setBottleNo(e.target.value)} />
+            <TextField label="Comment" value={comment} onChange={(e) => setComment(e.target.value)} multiline/>
             <Button variant="contained" component="label">
                 Bild hochladen
                 <input type="file" hidden onChange={handleImageChange} />
