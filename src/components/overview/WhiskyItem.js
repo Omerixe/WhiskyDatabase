@@ -23,7 +23,7 @@ const WhiskyItem = ({ whisky }) => (
             <Grid item xs={whisky.imageUrl ? 8 : 12}>
                 <CardContent>
                     <Typography variant="h5" component="div">
-                        {whisky.distillery}
+                        {whisky.distillery} {whisky.series ? " - " + whisky.series: ""} {whisky.bottler ? " - " + whisky.bottler: ""}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
                         Alter: {whisky.age}
