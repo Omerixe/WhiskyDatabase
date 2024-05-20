@@ -94,13 +94,57 @@ const WhiskyDetail = () => {
                             <CardContent>
                                 <>
                                     <Typography variant="h4" component="div">
-                                    {whisky.distillery}
+                                        {whisky.distillery} {whisky.series ? " - " + whisky.series: ""} {whisky.bottler ? " - " + whisky.bottler: ""}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
-                                        Age: {whisky.age}
+                                        Destillerie: {whisky.distillery}
                                     </Typography>
-                                    <Typography variant="body2" color="text.secondary">
+                                    <Typography variant='body2' color='text.secondary'>
                                         Region: {whisky.region}
+                                    </Typography>
+                                    {whisky.series && (
+                                        <Typography variant="body2" color="text.secondary">
+                                            Serie: {whisky.series}
+                                        </Typography>
+                                    )}
+                                    { whisky.bottler && (
+                                        <Typography variant="body2" color="text.secondary">
+                                            Bottler: {whisky.bottler}
+                                        </Typography>
+                                    )}
+                                    <Typography variant="body2" color="text.secondary">
+                                        Alter: {whisky.age ? whisky.age : "N/A"}
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Alc. Vol: {whisky.abv + "%"}
+                                    </Typography>
+                                    { whisky.barrelNo && (
+                                        <Typography variant="body2" color="text.secondary">
+                                            Fassnummer: {whisky.barrelNo}
+                                        </Typography>
+                                    )}
+                                    { whisky.bottleNo && (
+                                        <Typography variant="body2" color="text.secondary">
+                                            Flaschennummer: {whisky.bottleNo}
+                                        </Typography>
+                                    )}
+                                    <Typography variant="body2" color="text.secondary">
+                                        Status: {whisky.status}
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Destillationsdatum: {whisky.distilledDate}
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Abfülldatum: {whisky.bottledDate}
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Erstellt am: {whisky.creationDate}
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Zuletzt aktualisiert am: {whisky.lastUpdateDate}
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Kommentar: {whisky.comment}
                                     </Typography>
                                 </>
                             </CardContent>
