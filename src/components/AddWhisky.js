@@ -12,10 +12,10 @@ import Autocomplete from '@mui/material/Autocomplete';
 const AddWhisky = () => {
     const [name, setName] = useState('');
     const [age, setAge] = useState('');
-    const [distillery, setDistillery] = useState(null);
+    const [selectedDistillery, setDistillery] = useState(null);
     const [type, setType] = useState('');
     const [regions, setRegions] = useState([]);
-    const [region, setRegion] = useState(null);
+    const [selectedRegion, setRegion] = useState(null);
     const [newRegion, setNewRegion] = useState('');
     const [distilleries, setDistilleries] = useState([]);
     const [newDistillery, setNewDistillery] = useState('');
@@ -23,8 +23,9 @@ const AddWhisky = () => {
     const [imagePreviewUrl, setImagePreviewUrl] = useState('');
 
     const loadDistilleries = async (region = undefined) => {
-        fetchDistilleries(region, setDistilleries);
-        if (region && !distilleries.includes(distillery)) {
+        const loadedDistilleries = await fetchDistilleries(region, setDistilleries);
+        setDistilleries(loadedDistilleries);
+        if (region && selectedDistillery && !loadedDistilleries.includes(selectedDistillery)) {
             resetDistillery();
         }
     };
@@ -64,8 +65,8 @@ const AddWhisky = () => {
     };
 
     const handleSubmit = async () => {
-        let distilleryId = distillery ? distillery.id : null;
-        let regionId = region ? region.id : null;
+        let distilleryId = selectedDistillery ? selectedDistillery.id : null;
+        let regionId = selectedRegion ? selectedRegion.id : null;
 
         if (!distilleryId && newDistillery) {
             // Add the new distillery to Firestore
@@ -118,7 +119,7 @@ const AddWhisky = () => {
             <Autocomplete
                 options={distilleries}
                 getOptionLabel={(option) => option.name}
-                value={distillery}
+                value={selectedDistillery}
                 onChange={(_, newValue) => setDistillery(newValue)}
                 renderInput={(params) => <TextField {...params} label="Destillerie" />}
                 freeSolo
@@ -128,7 +129,7 @@ const AddWhisky = () => {
             <Autocomplete
                 options={regions}
                 getOptionLabel={(option) => option.name}
-                value={region}
+                value={selectedRegion}
                 onChange={(_, newValue) => setRegion(newValue)}
                 renderInput={(params) => <TextField {...params} label="Region" />}
                 freeSolo

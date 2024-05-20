@@ -1,6 +1,6 @@
 // src/components/WhiskyList.js
 import React, { useEffect, useState } from 'react';
-import { db } from '../firebase';
+import { db, fetchDistilleries } from '../firebase';
 import { Link } from 'react-router-dom';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import WhiskyItem from './WhiskyItem';
@@ -17,12 +17,24 @@ const WhiskyList = () => {
     const [selectedRegion, setSelectedRegion] = useState(null);
 
     useEffect(() => {
-        const fetchDistilleries = async () => {
-            const snapshot = await getDocs(collection(db, 'distilleries'));
-            setDistilleries(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-        };
-        fetchDistilleries();
+        loadDistilleries();
     }, []);
+
+    const changeRegionFilter = (region) => {
+        setSelectedRegion(region);
+        const regionId = region ? region.id : undefined;
+        loadDistilleries(regionId);
+    };
+
+    const loadDistilleries = async (region = undefined) => {
+        const loadeddistilleries = await fetchDistilleries(region);
+        console.log("Region", region);
+        console.log("Loaded distilleries", loadeddistilleries);
+        setDistilleries(loadeddistilleries);
+        if (region && !loadeddistilleries.includes(selectedDistillery)) {
+            setSelectedDistillery(null);
+        }
+    };
 
     useEffect(() => {
         const fetchRegions = async () => {
@@ -57,14 +69,14 @@ const WhiskyList = () => {
                 options={distilleries}
                 getOptionLabel={(option) => option.name}
                 value={selectedDistillery}
-                onChange={(event, newValue) => setSelectedDistillery(newValue)}
+                onChange={(_, newValue) => setSelectedDistillery(newValue)}
                 renderInput={(params) => <TextField {...params} label="Filter nach Destillerie" />}
             />
             <Autocomplete
                 options={regions}
                 getOptionLabel={(option) => option.name}
                 value={selectedRegion}
-                onChange={(event, newValue) => setSelectedRegion(newValue)}
+                onChange={(_, newValue) => changeRegionFilter(newValue)}
                 renderInput={(params) => <TextField {...params} label="Filter nach Region" />}
             />
             <Grid container spacing={2}>
