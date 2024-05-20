@@ -9,36 +9,23 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Autocomplete from '@mui/material/Autocomplete';
 import DistilleryInput from './DistilleryInput';
+import RegionInput from './RegionInput';
 
 const AddWhisky = () => {
     const [name, setName] = useState('');
     const [age, setAge] = useState('');
-    const [regions, setRegions] = useState([]);
-    const [selectedRegion, setRegion] = useState(null);
-    const [newRegion, setNewRegion] = useState('');
+    const [region, setRegion] = useState(null);
     const [distillery, setDistillery] = useState(null);
     const [image, setImage] = useState(null);
     const [imagePreviewUrl, setImagePreviewUrl] = useState('');
-
-    const handleRegionChange = (newRegion) => {
-        setNewRegion(newRegion);
-    };
 
     const handleDistilleryChange = (distillery) => {
         setDistillery(distillery);
         const distilleryId = distillery ? (distillery.id ? distillery.id : null) : null;
         if (distilleryId) {
-            setNewRegion(distillery.region);
+            setRegion(distillery.region);
         }
     }
-
-    useEffect(() => {
-        const fetchRegions = async () => {
-            const snapshot = await getDocs(collection(db, 'regions'));
-            setRegions(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-        }
-        fetchRegions();
-    }, []);
 
     const handleImageChange = (e) => {
         if (e.target.files[0]) {
@@ -47,19 +34,24 @@ const AddWhisky = () => {
         }
     };
 
+    useEffect(() => {
+        console.log("Region changed", region);
+    }, [region]);
+
     const handleSubmit = async () => {
         let distilleryId = distillery.id ? distillery.id : null;
-        let regionId = selectedRegion ? selectedRegion.id : null;
+        let regionId = region.id ? region.id : null;
 
         if (!distilleryId && distillery) {
             // Add the new distillery to Firestore
             await setDoc(doc(db, 'distilleries', distillery), { name: distillery });
+            distilleryId = distillery;
         }
 
-        if (!regionId && newRegion) {
+        if (!regionId && region) {
             // Add the new region to Firestore
-            await setDoc(doc(db, 'regions', newRegion), { name: newRegion });
-            regionId = newRegion;
+            await setDoc(doc(db, 'regions', region), { name: region });
+            regionId = region;
         }
 
         let imageUrl = '';
@@ -82,8 +74,7 @@ const AddWhisky = () => {
         setName('');
         setAge('');
         setDistillery(null);
-        setNewRegion('');
-        setRegion('');
+        setRegion(null);
         setImage(null);
         setImagePreviewUrl('');
     };
@@ -97,18 +88,13 @@ const AddWhisky = () => {
             <TextField label="Alter" type="number" value={age} onChange={(e) => setAge(e.target.value)} required />
             <DistilleryInput 
                 freeInputAllowed={true} 
-                region={selectedRegion} 
+                region={region} 
                 handleDistilleryChange={handleDistilleryChange} 
             />
-            <Autocomplete
-                options={regions}
-                getOptionLabel={(option) => option.name}
-                value={selectedRegion}
-                onChange={(_, newValue) => setRegion(newValue)}
-                renderInput={(params) => <TextField {...params} label="Region" />}
-                freeSolo
-                inputValue={newRegion}
-                onInputChange={(_, newInputValue) => handleRegionChange(newInputValue)}
+            <RegionInput 
+                freeInputAllowed={true}
+                inputRegion={region} 
+                handleRegionChange={setRegion} 
             />
             <Button variant="contained" component="label">
                 Bild hochladen

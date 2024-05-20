@@ -13,10 +13,10 @@ const DistilleryInput = ({ freeInputAllowed, region, handleDistilleryChange }) =
     }, [region]);
 
     const loadDistilleries = async (region = undefined) => {
-        const regionId = region ? region.id : undefined;
+        const regionId = region ? region.id ? region.id : undefined: undefined;
         const loadedDistilleries = await fetchDistilleries(regionId, setDistilleries);
         setDistilleries(loadedDistilleries);
-        if (region && selectedDistillery && !loadedDistilleries.includes(selectedDistillery)) {
+        if (regionId && selectedDistillery && !loadedDistilleries.some(distillery => distillery.id === selectedDistillery.id)) {
             resetDistillery();
         }
     };
@@ -29,12 +29,12 @@ const DistilleryInput = ({ freeInputAllowed, region, handleDistilleryChange }) =
     const handleSelectedDistillery = (distillery) => {
         setDistillery(distillery);
         handleDistilleryChange(distillery);
-    }
+    };
 
     const handleNewDistillery = (newDistillery) => {
         setNewDistillery(newDistillery);
         handleDistilleryChange(newDistillery);
-    }
+    };
 
     return (
         <Autocomplete
