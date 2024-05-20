@@ -12,6 +12,7 @@ import RegionInput from './RegionInput';
 import MenuItem from '@mui/material/MenuItem';
 import { statusConstants } from '../constants';
 import { InputAdornment } from '@mui/material';
+import SeriesInput from './SeriesInput';
 
 const AddWhisky = () => {
     const [age, setAge] = useState(''); 
@@ -51,6 +52,7 @@ const AddWhisky = () => {
     const handleSubmit = async () => {
         let distilleryId = distillery.id ? distillery.id : null;
         let regionId = region.id ? region.id : null;
+        let seriesId = series.id ? series.id : null;
 
         if (!distilleryId && distillery) {
             // Add the new distillery to Firestore
@@ -62,6 +64,12 @@ const AddWhisky = () => {
             // Add the new region to Firestore
             await setDoc(doc(db, 'regions', region), { name: region });
             regionId = region;
+        }
+
+        if (!seriesId && series) {
+            // Add the new series to Firestore
+            await setDoc(doc(db, 'series', series), { name: series });
+            seriesId = series;
         }
 
         let imageUrl = '';
@@ -123,7 +131,11 @@ const AddWhisky = () => {
                 handleRegionChange={setRegion} 
             />
             <TextField label="Bottler" value={bottler} onChange={(e) => setBottler(e.target.value)} />
-            <TextField label="Series" value={series} onChange={(e) => setSeries(e.target.value)} />
+            <SeriesInput
+                freeInputAllowed={true}
+                inputSeries={series}
+                handleSeriesChange={setSeries}
+            />
             <TextField label="Alter" type="number" value={age} onChange={(e) => setAge(e.target.value)} required />
             <TextField label="Alc. Vol" value={abv} onChange={(e) => setAbv(e.target.value)} required InputProps={{
                 endAdornment: <InputAdornment position="end">%</InputAdornment>,
