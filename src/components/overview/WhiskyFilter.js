@@ -11,6 +11,10 @@ const WhiskyFilter = (updateFunction) => {
     const [selectedDistillery, setSelectedDistillery] = useState(null);
     const [regions, setRegions] = useState([]);
     const [selectedRegion, setSelectedRegion] = useState(null);
+    const [series, setSeries] = useState([]);
+    const [selectedSeries, setSelectedSeries] = useState(null);
+    const [bottlers, setBottlers] = useState([]);
+    const [selectedBottler, setSelectedBottler] = useState(null);
 
     useEffect(() => {
         loadDistilleries();
@@ -36,23 +40,38 @@ const WhiskyFilter = (updateFunction) => {
             setRegions(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
         };
         fetchRegions();
+        const fetchSeries = async () => {
+            const snapshot = await getDocs(collection(db, 'series'));
+            setSeries(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        };
+        fetchSeries();
+        const fetchBottlers = async () => {
+            const snapshot = await getDocs(collection(db, 'bottlers'));
+            setBottlers(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        };
+        fetchBottlers();
     }, []);
 
     useEffect(() => {
         const fetchWhiskies = async () => {
             let whiskyQuery = collection(db, 'whiskies');
-            if (selectedRegion && selectedDistillery) {
-                whiskyQuery = query(whiskyQuery, where('region', '==', selectedRegion.id), where('distillery', '==', selectedDistillery.id));
-            } else if (selectedDistillery) {
+            if (selectedDistillery) {
                 whiskyQuery = query(whiskyQuery, where('distillery', '==', selectedDistillery.id));
-            } else if (selectedRegion) {
+            }
+            if (selectedRegion) {
                 whiskyQuery = query(whiskyQuery, where('region', '==', selectedRegion.id));
+            }
+            if (selectedSeries) {
+                whiskyQuery = query(whiskyQuery, where('series', '==', selectedSeries.id));
+            }
+            if (selectedBottler) {
+                whiskyQuery = query(whiskyQuery, where('bottler', '==', selectedBottler.id));
             }
             const snapshot = await getDocs(whiskyQuery);
             updateFunction.updateWhiskyList(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
         };
         fetchWhiskies();
-    }, [selectedDistillery, selectedRegion]);
+    }, [selectedDistillery, selectedRegion, selectedSeries, selectedBottler]);
 
     const resetFilters = () => {
         setSelectedDistillery(null);
@@ -82,6 +101,28 @@ const WhiskyFilter = (updateFunction) => {
                         setSelectedDistillery(newValue);
                     }}
                     renderInput={(params) => <TextField {...params} label="Destillerie" />}
+                />
+            </Grid>
+            <Grid item xs={12} md={6}>
+                <Autocomplete
+                    options={series}
+                    getOptionLabel={(option) => option.name}
+                    value={selectedSeries}
+                    onChange={(_, newValue) => {
+                        setSelectedSeries(newValue);
+                    }}
+                    renderInput={(params) => <TextField {...params} label="Serie" />}
+                />
+            </Grid>
+            <Grid item xs={12} md={6}>
+                <Autocomplete
+                    options={bottlers}
+                    getOptionLabel={(option) => option.name}
+                    value={selectedBottler}
+                    onChange={(_, newValue) => {
+                        setSelectedBottler(newValue);
+                    }}
+                    renderInput={(params) => <TextField {...params} label="Abfüller" />}
                 />
             </Grid>
             <Grid item xs={12} md={6}>
