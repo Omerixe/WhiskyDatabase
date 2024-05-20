@@ -28,8 +28,6 @@ const WhiskyList = () => {
 
     const loadDistilleries = async (region = undefined) => {
         const loadeddistilleries = await fetchDistilleries(region);
-        console.log("Region", region);
-        console.log("Loaded distilleries", loadeddistilleries);
         setDistilleries(loadeddistilleries);
         if (region && !loadeddistilleries.includes(selectedDistillery)) {
             setSelectedDistillery(null);
