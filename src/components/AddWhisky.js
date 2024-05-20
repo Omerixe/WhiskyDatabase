@@ -13,7 +13,6 @@ const AddWhisky = () => {
     const [name, setName] = useState('');
     const [age, setAge] = useState('');
     const [selectedDistillery, setDistillery] = useState(null);
-    const [type, setType] = useState('');
     const [regions, setRegions] = useState([]);
     const [selectedRegion, setRegion] = useState(null);
     const [newRegion, setNewRegion] = useState('');
@@ -91,7 +90,6 @@ const AddWhisky = () => {
             name,
             age: parseInt(age),
             distillery: distilleryId,
-            type,
             region: regionId,
             imageUrl,
         };
@@ -103,7 +101,6 @@ const AddWhisky = () => {
         setDistillery(null);
         setNewDistillery('');
         setNewRegion('');
-        setType('');
         setRegion('');
         setImage(null);
         setImagePreviewUrl('');
@@ -136,7 +133,6 @@ const AddWhisky = () => {
                 inputValue={newRegion}
                 onInputChange={(_, newInputValue) => handleRegionChange(newInputValue)}
             />
-            <TextField label="Typ" value={type} onChange={(e) => setType(e.target.value)} required />
             <Button variant="contained" component="label">
                 Bild hochladen
                 <input type="file" hidden onChange={handleImageChange} />

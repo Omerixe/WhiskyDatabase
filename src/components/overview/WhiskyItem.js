@@ -32,9 +32,6 @@ const WhiskyItem = ({ whisky }) => (
                         Destillerie: {whisky.distillery}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                        Typ: {whisky.type}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
                         Region: {whisky.region}
                     </Typography>
                 </CardContent>

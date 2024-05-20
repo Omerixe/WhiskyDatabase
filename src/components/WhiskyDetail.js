@@ -44,7 +44,6 @@ const WhiskyDetail = () => {
         description: '',
         age: '',
         distillery: '',
-        type: '',
         region: '',
     });
 
@@ -139,14 +138,6 @@ const WhiskyDetail = () => {
                                 margin="normal"
                             />
                             <TextField
-                                label="Type"
-                                name="type"
-                                value={formValues.type}
-                                onChange={handleChange}
-                                fullWidth
-                                margin="normal"
-                            />
-                            <TextField
                                 label="Region"
                                 name="region"
                                 value={formValues.region}
@@ -165,9 +156,6 @@ const WhiskyDetail = () => {
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
                                 Distillery: {whisky.distillery}
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                Type: {whisky.type}
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
                                 Region: {whisky.region}
