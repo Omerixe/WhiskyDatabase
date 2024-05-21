@@ -1,70 +1,38 @@
-# Getting Started with Create React App
+# Whisky Database
+**IMPORTANT**: This project is currently in development and not yet ready for use.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is a fun "long weekend" project where I wanted to show my partner how I can transform his excel "database" easily in an application. 
+As he wanted to use the app on iOS, Android and desktop I decided to give react another try. I haven't touched it since 2019, and then I only did a nanodegree. The other option would've been Kotlin Multiplatform but it would've taken me more time to set it up and get it right.
+The base structure of the project was pretty much created by ChatGPT-4o. Only after a while I decided to implement changes on my own when I was fed up by the slow generation speed of answers. I then only used it for some detailed questions and for transforming the existing data into a format that I can use to feed into Firebase.
 
-## Available Scripts
+## Features
+- Whisky overview that shows all whiskies or those found that match a given filter
+- Add new whiskies
+- Edit existing whiskies
+- German UI
 
-In the project directory, you can run:
+**Outlook:**
+- The app should get a nicer design
+- Maybe some fancy AI stuff with image recognition?
 
-### `npm start`
+## Techstack
+**React** in the frontend as it seemed easy enough to use as a noob and especially easy to host.  
+**Firebase** as my cloud service as it offers what I needed for free and I already used it in some native projects. (I make use of Firestore, Storage and Authentication)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Setup
+1. Ensure you have Node.js and npm installed. You can download them from nodejs.org.
+2. You need a Firebase instance for your project and set up the following services:
+- Firestore
+- Storage
+- Authentication
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Create an `.env` file with the following values (coming from your firebase config)
+```
+REACT_APP_FIREBASE_API_KEY="[API_KEY]"
+REACT_APP_FIREBASE_AUTH_DOMAIN="[AUTH_DOMAIN]"
+REACT_APP_FIREBASE_PROJECT_ID="[PROJECT_ID]"
+REACT_APP_FIREBASE_STORAGE_BUCKET="[STORAGE_BUCKET]"
+REACT_APP_FIREBASE_MESSAGING_SENDER_ID="[MESSAGING_SENDER_ID]"
+REACT_APP_FIREBASE_APP_ID="[APP_ID]"
+```
+3. Run `npm start` in your project folder
