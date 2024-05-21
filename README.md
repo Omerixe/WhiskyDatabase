@@ -36,3 +36,6 @@ REACT_APP_FIREBASE_MESSAGING_SENDER_ID="[MESSAGING_SENDER_ID]"
 REACT_APP_FIREBASE_APP_ID="[APP_ID]"
 ```
 3. Run `npm start` in your project folder
+
+## Licence
+This project is licensed under the terms of the MIT license.
