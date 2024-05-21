@@ -1,8 +1,10 @@
 # Whisky Database
-**IMPORTANT**: This project is currently in development and not yet ready for use.
+**IMPORTANT**: This project is currently in development and not yet ready for use. It is currently hacked together and by far not stable!
 
-This is a fun "long weekend" project where I wanted to show my partner how I can transform his excel "database" easily in an application. 
+This is a fun "long weekend" project where I wanted to show my partner how I can transform his excel "database" easily in an application.
+
 As he wanted to use the app on iOS, Android and desktop I decided to give react another try. I haven't touched it since 2019, and then I only did a nanodegree. The other option would've been Kotlin Multiplatform but it would've taken me more time to set it up and get it right.
+
 The base structure of the project was pretty much created by ChatGPT-4o. Only after a while I decided to implement changes on my own when I was fed up by the slow generation speed of answers. I then only used it for some detailed questions and for transforming the existing data into a format that I can use to feed into Firebase.
 
 ## Features
