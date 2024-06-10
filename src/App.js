@@ -49,7 +49,9 @@ const App = () => {
   return (
     <AuthProvider>
       <Router>
-        <AppContent />
+        <div translate='no'>
+          <AppContent />
+        </div>
       </Router>
     </AuthProvider>
   );
