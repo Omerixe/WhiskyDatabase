@@ -22,7 +22,7 @@ const WhiskyList = () => {
             <>
                 <WhiskyFilter updateWhiskyList={updateWhiskyList} />
             </>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} style={{ marginTop: '20px' }}>
                 {whiskies.map(whisky => (
                     <Grid item xs={12} sm={6} md={4} key={whisky.id}>
                         <Link to={`/whisky/${whisky.id}`} style={{ textDecoration: 'none' }}>

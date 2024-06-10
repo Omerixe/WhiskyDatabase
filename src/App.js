@@ -33,7 +33,7 @@ const AppContent = () => {
           )}
         </Toolbar>
       </AppBar>
-      <Container>
+      <Container style={{marginTop: '20px', marginBottom: '20px'}}>
         <Routes>
           <Route path="/" element={currentUser ? <WhiskyList /> : <Login />} />
           <Route path="/add" element={currentUser ? <AddWhisky /> : <Login />} />
