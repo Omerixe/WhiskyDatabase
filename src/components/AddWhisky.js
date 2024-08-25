@@ -76,7 +76,7 @@ const AddWhisky = ({whisky, editingDone}) => {
 
         if (!distilleryId && distillery) {
             // Add the new distillery to Firestore
-            await setDoc(doc(db, 'distilleries', distillery), { name: distillery });
+            await setDoc(doc(db, 'distilleries', distillery), { name: distillery, region: region });
             distilleryId = distillery;
         }
 
