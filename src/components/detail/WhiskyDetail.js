@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { db } from '../../firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, deleteDoc } from 'firebase/firestore';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -67,7 +67,7 @@ const WhiskyDetail = () => {
     const handleDeleteClick = async () => {
         //Todo: Delete image as well
         const docRef = doc(db, 'whiskies', id);
-        await docRef.delete();
+        await deleteDoc(docRef);
         navigate('/');
     };
 
