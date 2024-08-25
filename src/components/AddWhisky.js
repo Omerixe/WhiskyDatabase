@@ -111,16 +111,16 @@ const AddWhisky = ({whisky, editingDone}) => {
             region: regionId,
             imageUrl,
             abv: parseFloat(abv),
-            distilledDate: distilledDate ? distilledDate : null,
-            bottledDate: bottledDate ? bottledDate : null,
+            distilledDate: distilledDate ? formatDateToYYYYMMDD(distilledDate) : null,
+            bottledDate: bottledDate ? formatDateToYYYYMMDD(bottledDate) : null,
             barrelNo,
             bottleNo,
             status,
             comment,
             bottler,
             series,
-            creationDate: whisky ? whisky.creationDate : Date.now().toString(),
-            lastUpdateDate: Date.now().toString(),
+            creationDate: formatDateToYYYYMMDD(whisky ? whisky.creationDate : Date.now()),
+            lastUpdateDate: formatDateToYYYYMMDD(Date.now()),
         };
 
         if (editingDone) {
@@ -201,5 +201,11 @@ const AddWhisky = ({whisky, editingDone}) => {
         </Box>
     );
 };
+
+function formatDateToYYYYMMDD(date) {
+    if (!date) return null;
+    const d = new Date(date);
+    return d.toISOString().split('T')[0];
+}
 
 export default AddWhisky;
