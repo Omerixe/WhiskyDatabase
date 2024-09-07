@@ -82,6 +82,7 @@ const WhiskyFilter = (updateFunction) => {
     const resetFilters = () => {
         setSelectedDistillery(null);
         setSelectedRegion(null);
+        setSelectedSeries(null);
         loadDistilleries();
     }
 
