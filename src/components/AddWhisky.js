@@ -328,7 +328,7 @@ const AddWhisky = ({ whisky, editingDone }) => {
                 </Grid>
             </Box>
 
-            <Box mt={4}>
+            <Box mt={4} sx={{ display: 'flex', justifyContent: 'space-between' }}>
 
                 <Grid item xs={12} sm={6}>
                     <Button
