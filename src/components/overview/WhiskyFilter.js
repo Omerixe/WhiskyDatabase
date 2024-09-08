@@ -7,6 +7,8 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { statusConstants } from '../../constants';
 import MenuItem from '@mui/material/MenuItem';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
 
 const WhiskyFilter = (updateFunction) => {
     const [distilleries, setDistilleries] = useState([]);
@@ -89,64 +91,77 @@ const WhiskyFilter = (updateFunction) => {
     }
 
     return (
-        <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
-                <Autocomplete
-                    options={regions}
-                    getOptionLabel={(option) => option.name}
-                    value={selectedRegion}
-                    onChange={(_, newValue) => {
-                        changeRegionFilter(newValue);
-                    }}
-                    renderInput={(params) => <TextField {...params} label="Region" />}
-                />
-            </Grid>
-            <Grid item xs={12} md={6}>
-                <Autocomplete
-                    options={distilleries}
-                    getOptionLabel={(option) => option.name}
-                    value={selectedDistillery}
-                    onChange={(_, newValue) => {
-                        setSelectedDistillery(newValue);
-                    }}
-                    renderInput={(params) => <TextField {...params} label="Destillerie" />}
-                />
-            </Grid>
-            <Grid item xs={12} md={6}>
-                <Autocomplete
-                    options={series}
-                    getOptionLabel={(option) => option.name}
-                    value={selectedSeries}
-                    onChange={(_, newValue) => {
-                        setSelectedSeries(newValue);
-                    }}
-                    renderInput={(params) => <TextField {...params} label="Serie" />}
-                />
-            </Grid>
-            <Grid item xs={12} md={6}>
-                <Autocomplete
-                    options={bottlers}
-                    getOptionLabel={(option) => option.name}
-                    value={selectedBottler}
-                    onChange={(_, newValue) => {
-                        setSelectedBottler(newValue);
-                    }}
-                    renderInput={(params) => <TextField {...params} label="Abfüller" />}
-                />
-            </Grid>
-            <Grid item xs={12} md={6}>
-                <TextField label="Status" value={status} onChange={(e) => setStatus(e.target.value)} fullWidth select>
-                    {statusConstants.map((option) => (  
-                        <MenuItem key={option} value={option}>
-                            {option}
-                        </MenuItem>
-                    ))}
-                </TextField>
-            </Grid>
-            <Grid item xs={12} md={6}>
-                <Button variant="contained" color="primary" onClick={resetFilters}>Filter zurücksetzen</Button>
-            </Grid>
-        </Grid>
+        <div>
+            <Accordion>
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="filter-content"
+                    id="filter-header"
+                >
+                    <Typography variant="h6">Filter</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} md={6}>
+                            <Autocomplete
+                                options={regions}
+                                getOptionLabel={(option) => option.name}
+                                value={selectedRegion}
+                                onChange={(_, newValue) => {
+                                    changeRegionFilter(newValue);
+                                }}
+                                renderInput={(params) => <TextField {...params} label="Region" />}
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <Autocomplete
+                                options={distilleries}
+                                getOptionLabel={(option) => option.name}
+                                value={selectedDistillery}
+                                onChange={(_, newValue) => {
+                                    setSelectedDistillery(newValue);
+                                }}
+                                renderInput={(params) => <TextField {...params} label="Destillerie" />}
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <Autocomplete
+                                options={series}
+                                getOptionLabel={(option) => option.name}
+                                value={selectedSeries}
+                                onChange={(_, newValue) => {
+                                    setSelectedSeries(newValue);
+                                }}
+                                renderInput={(params) => <TextField {...params} label="Serie" />}
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <Autocomplete
+                                options={bottlers}
+                                getOptionLabel={(option) => option.name}
+                                value={selectedBottler}
+                                onChange={(_, newValue) => {
+                                    setSelectedBottler(newValue);
+                                }}
+                                renderInput={(params) => <TextField {...params} label="Abfüller" />}
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <TextField label="Status" value={status} onChange={(e) => setStatus(e.target.value)} fullWidth select>
+                                {statusConstants.map((option) => (
+                                    <MenuItem key={option} value={option}>
+                                        {option}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <Button variant="contained" color="primary" onClick={resetFilters}>Filter zurücksetzen</Button>
+                        </Grid>
+                    </Grid>
+                </AccordionDetails>
+            </Accordion>
+        </div>
     );
 };
 
