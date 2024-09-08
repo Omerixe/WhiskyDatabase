@@ -1,7 +1,7 @@
 // src/components/AddWhisky.js
 import React, { useState, useEffect } from 'react';
 import { db, storage, addWhisky } from '../firebase';
-import { setDoc, doc, updateDoc, Timestamp} from 'firebase/firestore';
+import { setDoc, doc, updateDoc, Timestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -14,9 +14,11 @@ import { statusConstants } from '../constants';
 import { InputAdornment } from '@mui/material';
 import SeriesInput from './inputs/SeriesInput';
 import BottlerInput from './inputs/BottlerInput';
+import Grid from '@mui/material/Grid';
+import Divider from '@mui/material/Divider';
 
-const AddWhisky = ({whisky, editingDone}) => {
-    const [age, setAge] = useState(''); 
+const AddWhisky = ({ whisky, editingDone }) => {
+    const [age, setAge] = useState('');
     const [abv, setAbv] = useState('');
     const [distilledDate, setDistilledDate] = useState('');
     const [bottledDate, setBottledDate] = useState('');
@@ -31,7 +33,7 @@ const AddWhisky = ({whisky, editingDone}) => {
     const [image, setImage] = useState(null);
     const [imagePreviewUrl, setImagePreviewUrl] = useState('');
 
-    useEffect(() => {   
+    useEffect(() => {
         if (whisky) {
             setAge(whisky.age ? whisky.age.toString() : '');
             setAbv(whisky.abv ? whisky.abv.toString() : '');
@@ -135,70 +137,224 @@ const AddWhisky = ({whisky, editingDone}) => {
             setRegion(null);
             setImage(null);
             setImagePreviewUrl('');
-            setAbv(''); 
-            setDistilledDate(''); 
-            setBottledDate(''); 
-            setBarrelNo(''); 
-            setBottleNo(''); 
-            setStatus(''); 
-            setComment(''); 
-            setBottler(''); 
+            setAbv('');
+            setDistilledDate('');
+            setBottledDate('');
+            setBarrelNo('');
+            setBottleNo('');
+            setStatus('');
+            setComment('');
+            setBottler('');
             setSeries('');
         }
     };
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Box sx={{ flexGrow: 1 }}>
             <Typography variant="h4" gutterBottom>
                 {whisky ? "Whisky bearbeiten" : "Whisky hinzufügen"}
             </Typography>
-            <DistilleryInput 
-                inputDistillery={distillery}
-                freeInputAllowed={true} 
-                region={region} 
-                handleDistilleryChange={handleDistilleryChange} 
-            />
-            <RegionInput 
-                freeInputAllowed={true}
-                inputRegion={region} 
-                handleRegionChange={setRegion} 
-            />
-            <BottlerInput
-                freeInputAllowed={true}
-                inputBottler={bottler}
-                handleBottlerChange={setBottler}
-            />
-            <SeriesInput
-                freeInputAllowed={true}
-                inputSeries={series}
-                handleSeriesChange={setSeries}
-            />
-            <TextField label="Alter" type="number" value={age} onChange={(e) => setAge(e.target.value)} required />
-            <TextField label="Alc. Vol" value={abv} onChange={(e) => setAbv(e.target.value)} required InputProps={{
-                endAdornment: <InputAdornment position="end">%</InputAdornment>,
-          }} />
-            <TextField label="Status" value={status} onChange={(e) => setStatus(e.target.value)} required select>
-                {statusConstants.map((option) => (  
-                    <MenuItem key={option} value={option}>
-                        {option}
-                    </MenuItem>
-                ))}
-            </TextField>
-            <TextField label="Destilliert am" type="date" value={distilledDate} onChange={(e) => setDistilledDate(e.target.value)} InputLabelProps={{ shrink: true }}/>
-            <TextField label="Abgefüllt am" type="date" value={bottledDate} onChange={(e) => setBottledDate(e.target.value)} InputLabelProps={{ shrink: true }}/>
-            <TextField label="Fass Nr" value={barrelNo} onChange={(e) => setBarrelNo(e.target.value)} />
-            <TextField label="Flasche Nr" type="number" value={bottleNo} onChange={(e) => setBottleNo(e.target.value)} />
-            <TextField label="Comment" value={comment} onChange={(e) => setComment(e.target.value)} multiline/>
-            <Button variant="contained" component="label">
-                Bild hochladen
-                <input type="file" hidden onChange={handleImageChange} />
-            </Button>
-            {imagePreviewUrl && (
-                <img src={imagePreviewUrl} alt="Image Preview" style={{ maxWidth: '100%', maxHeight: '300px', marginTop: '10px' }} />
-            )}
-            <Button variant="contained" color="primary" onClick={handleSubmit}>{editingDone ? "Update speichern" : "Whisky hinzufügen" }</Button>
-            {editingDone && <Button variant="contained" color="secondary" onClick={editingDone}>Abbrechen</Button>}
-        </Box>
+
+            <Typography variant="h6" gutterBottom>Basisinformationen</Typography>
+            <Divider sx={{ mb: 2 }} />
+
+            <Grid container spacing={3}>
+                <Grid item xs={12} sm={6}>
+                    <DistilleryInput
+                        inputDistillery={distillery}
+                        freeInputAllowed={true}
+                        region={region}
+                        handleDistilleryChange={handleDistilleryChange}
+                    />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                    <RegionInput
+                        freeInputAllowed={true}
+                        inputRegion={region}
+                        handleRegionChange={setRegion}
+                    />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                    <TextField
+                        label="Alter"
+                        type="number"
+                        value={age}
+                        autoComplete='off'
+                        onChange={(e) => setAge(e.target.value)}
+                        required
+                        fullWidth
+                    />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                    <TextField
+                        label="Alc. Vol"
+                        value={abv}
+                        onChange={(e) => setAbv(e.target.value)}
+                        required
+                        fullWidth
+                        autoComplete='off'
+                        InputProps={{
+                            endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                        }}
+                    />
+                </Grid>
+            </Grid>
+            <Box mt={4}>
+
+                <Typography variant="h6" gutterBottom>Zusatzinformationen zur Abfüllung</Typography>
+                <Divider sx={{ mb: 2 }} />
+                <Grid container spacing={3}>
+                    <Grid item xs={12} sm={6}>
+                        <BottlerInput
+                            freeInputAllowed={true}
+                            inputBottler={bottler}
+                            handleBottlerChange={setBottler}
+                        />
+                    </Grid>
+
+                    <Grid item xs={12} sm={6}>
+                        <SeriesInput
+                            freeInputAllowed={true}
+                            inputSeries={series}
+                            handleSeriesChange={setSeries}
+                        />
+                    </Grid>
+
+                    <Grid item xs={12} sm={6}>
+                        <TextField
+                            label="Destilliert am"
+                            type="date"
+                            value={distilledDate}
+                            onChange={(e) => setDistilledDate(e.target.value)}
+                            InputLabelProps={{ shrink: true }}
+                            fullWidth
+                        />
+                    </Grid>
+
+                    <Grid item xs={12} sm={6}>
+                        <TextField
+                            label="Abgefüllt am"
+                            type="date"
+                            value={bottledDate}
+                            onChange={(e) => setBottledDate(e.target.value)}
+                            InputLabelProps={{ shrink: true }}
+                            fullWidth
+                        />
+                    </Grid>
+
+                    <Grid item xs={12} sm={6}>
+                        <TextField
+                            label="Fass Nr"
+                            value={barrelNo}
+                            autoComplete='off'
+                            onChange={(e) => setBarrelNo(e.target.value)}
+                            fullWidth
+                        />
+                    </Grid>
+
+                    <Grid item xs={12} sm={6}>
+                        <TextField
+                            label="Flasche Nr"
+                            type="number"
+                            autoComplete='off'
+                            value={bottleNo}
+                            onChange={(e) => setBottleNo(e.target.value)}
+                            fullWidth
+                        />
+                    </Grid>
+
+                </Grid>
+            </Box>
+
+            <Box mt={4}>
+                <Typography variant="h6" gutterBottom>Status und Kommentar</Typography>
+                <Divider sx={{ mb: 2 }} />
+
+                <Grid container spacing={3}>
+                    <Grid item xs={12} sm={6}>
+                        <TextField
+                            label="Status"
+                            value={status}
+                            onChange={(e) => setStatus(e.target.value)}
+                            required
+                            select
+                            fullWidth
+                        >
+                            {statusConstants.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                    {option}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+                    </Grid>
+
+                    <Grid item xs={12}>
+                        <TextField
+                            label="Kommentar"
+                            value={comment}
+                            autoComplete='off'
+                            onChange={(e) => setComment(e.target.value)}
+                            fullWidth
+                            multiline
+                        />
+                    </Grid>
+                </Grid>
+            </Box>
+
+            <Box mt={4}>
+                <Typography variant="h6" gutterBottom>Bild</Typography>
+                <Divider sx={{ mb: 2 }} />
+                <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                        {imagePreviewUrl && (
+                            <img
+                                src={imagePreviewUrl}
+                                alt="Image Preview"
+                                style={{
+                                    maxWidth: '100%',
+                                    maxHeight: '300px',
+                                    marginTop: '10px',
+                                }}
+                            />
+                        )}
+                        <Button variant="contained" component="label" fullWidth>
+                            Bild hochladen
+                            <input type="file" hidden onChange={handleImageChange} />
+                        </Button>
+                    </Grid>
+                </Grid>
+            </Box>
+
+            <Box mt={4}>
+
+                <Grid item xs={12} sm={6}>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleSubmit}
+                        fullWidth
+                    >
+                        {editingDone ? "Update speichern" : "Whisky hinzufügen"}
+                    </Button>
+                </Grid>
+
+                {editingDone && (
+                    <Grid item xs={12} sm={6}>
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            onClick={editingDone}
+                            fullWidth
+                        >
+                            Abbrechen
+                        </Button>
+                    </Grid>
+                )}
+            </Box >
+        </Box >
     );
 };
 

@@ -42,7 +42,7 @@ const RegionInput = ({ freeInputAllowed, inputRegion, handleRegionChange }) => {
             getOptionLabel={(option) => option.name}
             value={selectedRegion}
             onChange={(_, newValue) => handleRegionChange(newValue)}
-            renderInput={(params) => <TextField {...params} label="Region" />}
+            renderInput={(params) => <TextField {...params} label="Region" required/>}
             freeSolo={freeInputAllowed}
             inputValue={newRegion}
             onInputChange={(_, newInputValue) => handleRegionChange(newInputValue)}

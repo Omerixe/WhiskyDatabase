@@ -44,7 +44,7 @@ const DistilleryInput = ({ freeInputAllowed, inputDistillery, region, handleDist
             getOptionLabel={(option) => option.name}
             value={selectedDistillery}
             onChange={(_, newValue) => handleDistilleryChange(newValue)}
-            renderInput={(params) => <TextField {...params} label="Destillerie" />}
+            renderInput={(params) => <TextField {...params} label="Destillerie" required />}
             freeSolo={freeInputAllowed}
             inputValue={newDistillery}
             onInputChange={(_, newInputValue) => handleDistilleryChange(newInputValue)}
