@@ -8,18 +8,32 @@ import Button from '@mui/material/Button';
 import { statusConstants } from '../../constants';
 import MenuItem from '@mui/material/MenuItem';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
+import { Accordion, AccordionSummary, AccordionDetails, Typography, Box } from '@mui/material';
 
 const WhiskyFilter = (updateFunction) => {
     const [distilleries, setDistilleries] = useState([]);
-    const [selectedDistillery, setSelectedDistillery] = useState(null);
+    const [selectedDistillery, setSelectedDistillery] = useState(() => {
+        return JSON.parse(sessionStorage.getItem('selectedDistillery')) || null;
+    });
     const [regions, setRegions] = useState([]);
-    const [selectedRegion, setSelectedRegion] = useState(null);
+    const [selectedRegion, setSelectedRegion] = useState(() => {
+        return JSON.parse(sessionStorage.getItem('selectedRegion')) || null;
+    });
     const [series, setSeries] = useState([]);
-    const [selectedSeries, setSelectedSeries] = useState(null);
+    const [selectedSeries, setSelectedSeries] = useState(() => {
+        return JSON.parse(sessionStorage.getItem('selectedSeries')) || null;
+    });
     const [bottlers, setBottlers] = useState([]);
-    const [selectedBottler, setSelectedBottler] = useState(null);
-    const [status, setStatus] = useState('');
+    const [selectedBottler, setSelectedBottler] = useState(() => {
+        return JSON.parse(sessionStorage.getItem('selectedBottler')) || null;
+    });
+    const [status, setStatus] = useState(() => {
+        return sessionStorage.getItem('status') || '';
+    });
+
+    const [accordionOpen, setAccordionOpen] = useState(() => {
+        return sessionStorage.getItem('accordionOpen') === 'true';
+    });
 
     useEffect(() => {
         loadDistilleries();
@@ -87,18 +101,57 @@ const WhiskyFilter = (updateFunction) => {
         setSelectedSeries(null);
         setSelectedBottler(null);
         setStatus('');
+        sessionStorage.removeItem('selectedDistillery');
+        sessionStorage.removeItem('selectedRegion');
+        sessionStorage.removeItem('selectedSeries');
+        sessionStorage.removeItem('selectedBottler');
+        sessionStorage.removeItem('status');
         loadDistilleries();
     }
 
+    // Save filters to sessionStorage when they change
+    useEffect(() => {
+        sessionStorage.setItem('selectedDistillery', JSON.stringify(selectedDistillery));
+        sessionStorage.setItem('selectedRegion', JSON.stringify(selectedRegion));
+        sessionStorage.setItem('selectedSeries', JSON.stringify(selectedSeries));
+        sessionStorage.setItem('selectedBottler', JSON.stringify(selectedBottler));
+        sessionStorage.setItem('status', status);
+    }, [selectedDistillery, selectedRegion, selectedSeries, selectedBottler, status]);
+
+    const handleAccordionChange = () => {
+        const newAccordionState = !accordionOpen;
+        setAccordionOpen(newAccordionState);
+        sessionStorage.setItem('accordionOpen', newAccordionState);
+    };
+
+    const generateFilterSummary = () => {
+        const filterStrings = [];
+
+        if (selectedRegion) filterStrings.push(`Region: ${selectedRegion.name}`);
+        if (selectedDistillery) filterStrings.push(`Destillerie: ${selectedDistillery.name}`);
+        if (selectedSeries) filterStrings.push(`Serie: ${selectedSeries.name}`);
+        if (selectedBottler) filterStrings.push(`Abfüller: ${selectedBottler.name}`);
+        if (status) filterStrings.push(`Status: ${status}`);
+
+        return filterStrings.length > 0 ? filterStrings.join(', ') : '';
+    };
+
     return (
         <div>
-            <Accordion>
+            <Accordion expanded={accordionOpen} onChange={handleAccordionChange}>
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="filter-content"
                     id="filter-header"
                 >
-                    <Typography variant="h6">Filter</Typography>
+                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                        <Typography variant="h6">Filter</Typography>
+                        {!accordionOpen && (
+                            <Typography variant="body2" color="textSecondary">
+                            {generateFilterSummary()}
+                            </Typography>
+                        )}
+                    </Box>
                 </AccordionSummary>
                 <AccordionDetails>
                     <Grid container spacing={2}>
