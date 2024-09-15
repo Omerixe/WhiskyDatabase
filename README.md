@@ -1,3 +1,4 @@
+![Image of the Overview](doc/img/overview.png)
 # Whisky Database
 **IMPORTANT**: This project is currently in development and not yet ready for use. It is currently hacked together and by far not stable!
 
@@ -12,9 +13,11 @@ The base structure of the project was pretty much created by ChatGPT-4o. Only af
 - Add new whiskies
 - Edit existing whiskies
 - German UI
+- Design is somewhat fixed now.. it's the best I can come up on my own ;)
 
 **Outlook:**
-- The app should get a nicer design
+- Rate Whiskies
+- Wishlist for whiskies that are not owned yet
 - Maybe some fancy AI stuff with image recognition?
 
 ## Techstack
