@@ -105,6 +105,8 @@ const AddWhisky = ({ whisky, editingDone }) => {
             const storageRef = ref(storage, `whiskies/${image.name}`);
             await uploadBytes(storageRef, image);
             imageUrl = await getDownloadURL(storageRef);
+        } else if (whisky.imageUrl) {
+            imageUrl = whisky.imageUrl;
         }
 
         const newWhisky = {
