@@ -34,7 +34,7 @@ const WhiskyItem = ({ whisky }) => (
                 color="text.secondary"
                 sx={{ display: 'flex', justifyContent: 'space-between' }}
             >
-                <span>{whisky.age} Jahre</span>
+                <span>{whisky.age ? whisky.age + " Jahre" : "N/A"}</span>
                 <span>{whisky.abv}%</span>
                 <span>{whisky.region}</span>
             </Typography>
