@@ -6,11 +6,12 @@ import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { statusConstants } from '../../constants';
-import MenuItem from '@mui/material/MenuItem';
+import MenuItem from     '@mui/material/MenuItem';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionSummary, AccordionDetails, Typography, Box } from '@mui/material';
 
 const WhiskyFilter = (updateFunction) => {
+    const [totalAmount, setTotalAmount] = useState(null);
     const [distilleries, setDistilleries] = useState([]);
     const [selectedDistillery, setSelectedDistillery] = useState(() => {
         return JSON.parse(sessionStorage.getItem('selectedDistillery')) || null;
@@ -89,8 +90,16 @@ const WhiskyFilter = (updateFunction) => {
             if (status) {
                 whiskyQuery = query(whiskyQuery, where('status', '==', status));
             }
+            
             const snapshot = await getDocs(whiskyQuery);
-            updateFunction.updateWhiskyList(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+            if (!selectedBottler && !selectedDistillery && !selectedRegion && !selectedSeries && !status) {
+                // If no filters are set, we can use the total amount of whiskies and store it for later use
+                setTotalAmount(snapshot.size);
+                updateFunction.updateWhiskyList(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })), snapshot.size);
+            } else {
+                updateFunction.updateWhiskyList(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })), totalAmount);
+            }
+            
         };
         fetchWhiskies();
     }, [selectedDistillery, selectedRegion, selectedSeries, selectedBottler, status]);
