@@ -209,13 +209,17 @@ const WhiskyFilter = (updateFunction) => {
                             />
                         </Grid>
                         <Grid item xs={12} md={6}>
-                            <TextField label="Status" value={status} onChange={(e) => setStatus(e.target.value)} fullWidth select>
-                                {statusConstants.map((option) => (
-                                    <MenuItem key={option} value={option}>
-                                        {option}
-                                    </MenuItem>
-                                ))}
-                            </TextField>
+                            <Autocomplete
+                                options={statusConstants}
+                                getOptionLabel={(option) => option}
+                                value={status || null}
+                                onChange={(_, newValue) => {
+                                    setStatus(newValue || '');
+                                }}
+                                renderInput={(params) => <TextField {...params} label="Status" />}
+                                clearOnEscape
+                                isClearable
+                            />
                         </Grid>
                         <Grid item xs={12} md={6}>
                             <Button variant="contained" color="primary" onClick={resetFilters}>Filter zurücksetzen</Button>
