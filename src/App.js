@@ -13,7 +13,6 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { light } from '@mui/material/styles/createPalette';
 
 const deepBrown = '#2C1B18';
 const warmGold = '#A67B5B';

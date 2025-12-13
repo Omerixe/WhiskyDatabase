@@ -1,7 +1,7 @@
 // src/components/AddWhisky.js
 import React, { useState, useEffect } from 'react';
 import { db, storage, addWhisky } from '../firebase';
-import { setDoc, doc, updateDoc, Timestamp } from 'firebase/firestore';
+import { setDoc, doc, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
