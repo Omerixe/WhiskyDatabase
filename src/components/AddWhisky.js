@@ -14,7 +14,7 @@ import { statusConstants } from '../constants';
 import { InputAdornment } from '@mui/material';
 import SeriesInput from './inputs/SeriesInput';
 import BottlerInput from './inputs/BottlerInput';
-import Grid from '@mui/material/Grid';
+import Grid from '@mui/material/GridLegacy';
 import Divider from '@mui/material/Divider';
 
 const AddWhisky = ({ whisky, editingDone }) => {
