@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import WhiskyItem from './WhiskyItem';
 import WhiskyFilter from './WhiskyFilter';
-import Grid from '@mui/material/Grid';
+import Grid from '@mui/material/GridLegacy';
 import Typography from '@mui/material/Typography';
 import LocalBarIcon from '@mui/icons-material/LocalBar';
 import Box from '@mui/material/Box';

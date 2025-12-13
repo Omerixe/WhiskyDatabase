@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { db, fetchDistilleries } from '../../firebase';
 import { collection, getDocs, query, where } from 'firebase/firestore';
-import Grid from '@mui/material/Grid';
+import Grid from '@mui/material/GridLegacy';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
