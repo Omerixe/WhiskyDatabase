@@ -324,7 +324,12 @@ const AddWhisky = ({ whisky, editingDone }) => {
                         )}
                         <Button variant="contained" component="label" fullWidth>
                             Bild hochladen
-                            <input type="file" hidden onChange={handleImageChange} />
+                            <input 
+                                type="file" 
+                                hidden 
+                                onChange={handleImageChange}
+                                accept="image/*"
+                            />
                         </Button>
                     </Grid>
                 </Grid>
