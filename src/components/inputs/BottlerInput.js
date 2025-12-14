@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../../firebase';
-import { collection, getDocs} from 'firebase/firestore';
+import { fetchCollection, COLLECTIONS } from '../../appwrite';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 
@@ -11,8 +10,13 @@ const BottlerInput = ({ freeInputAllowed, inputBottler, handleBottlerChange }) =
 
     useEffect(() => {
         const fetchBottlers = async () => {
-            const snapshot = await getDocs(collection(db, 'bottlers'));
-            setAllBottlers(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+            try {
+                const loadedBottlers = await fetchCollection(COLLECTIONS.BOTTLERS);
+                setAllBottlers(loadedBottlers);
+            } catch (error) {
+                console.error('Error loading bottlers:', error);
+                setAllBottlers([]);
+            }
         }
         fetchBottlers();
     }, []);

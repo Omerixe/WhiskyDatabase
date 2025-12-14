@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { db, fetchDistilleries } from '../../firebase';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { fetchDistilleries, fetchCollection, tablesDB, DATABASE_ID, COLLECTIONS, Query } from '../../appwrite';
 import Grid from '@mui/material/GridLegacy';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
@@ -10,7 +9,7 @@ import MenuItem from     '@mui/material/MenuItem';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionSummary, AccordionDetails, Typography, Box } from '@mui/material';
 
-const WhiskyFilter = (updateFunction) => {
+const WhiskyFilter = ({ updateWhiskyList }) => {
     const [totalAmount, setTotalAmount] = useState(null);
     const [distilleries, setDistilleries] = useState([]);
     const [selectedDistillery, setSelectedDistillery] = useState(() => {
@@ -56,50 +55,86 @@ const WhiskyFilter = (updateFunction) => {
 
     useEffect(() => {
         const fetchRegions = async () => {
-            const snapshot = await getDocs(collection(db, 'regions'));
-            setRegions(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+            try {
+                const loadedRegions = await fetchCollection(COLLECTIONS.REGIONS);
+                setRegions(loadedRegions);
+            } catch (error) {
+                console.error('Error loading regions:', error);
+                setRegions([]);
+            }
         };
         fetchRegions();
+        
         const fetchSeries = async () => {
-            const snapshot = await getDocs(collection(db, 'series'));
-            setSeries(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+            try {
+                const loadedSeries = await fetchCollection(COLLECTIONS.SERIES);
+                setSeries(loadedSeries);
+            } catch (error) {
+                console.error('Error loading series:', error);
+                setSeries([]);
+            }
         };
         fetchSeries();
+        
         const fetchBottlers = async () => {
-            const snapshot = await getDocs(collection(db, 'bottlers'));
-            setBottlers(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+            try {
+                const loadedBottlers = await fetchCollection(COLLECTIONS.BOTTLERS);
+                setBottlers(loadedBottlers);
+            } catch (error) {
+                console.error('Error loading bottlers:', error);
+                setBottlers([]);
+            }
         };
         fetchBottlers();
     }, []);
 
     useEffect(() => {
         const fetchWhiskies = async () => {
-            let whiskyQuery = collection(db, 'whiskies');
-            if (selectedDistillery) {
-                whiskyQuery = query(whiskyQuery, where('distillery', '==', selectedDistillery.id));
+            try {
+                let queries = [];
+                
+                if (selectedDistillery) {
+                    queries.push(Query.equal('distillery', selectedDistillery.id));
+                }
+                if (selectedRegion) {
+                    queries.push(Query.equal('region', selectedRegion.id));
+                }
+                if (selectedSeries) {
+                    queries.push(Query.equal('series', selectedSeries.id));
+                }
+                if (selectedBottler) {
+                    queries.push(Query.equal('bottler', selectedBottler.id));
+                }
+                if (status) {
+                    queries.push(Query.equal('status', status));
+                }
+                
+                // Only pass queries array if it has items, otherwise pass empty array or undefined
+                const response = await tablesDB.listRows({
+                    databaseId: DATABASE_ID,
+                    tableId: COLLECTIONS.WHISKIES,
+                    queries: queries.length > 0 ? queries : [],
+                    total: true
+                });
+
+                console.info('Whiskies', response);
+                const whiskies = response.rows.map(doc => ({ id: doc.$id, ...doc }));
+                
+                if (!selectedBottler && !selectedDistillery && !selectedRegion && !selectedSeries && !status) {
+                    // If no filters are set, we can use the total amount of whiskies and store it for later use
+                    setTotalAmount(response.total);
+                    updateWhiskyList(whiskies, response.total);
+                    console.info('Total whiskies without filters:', response.total);
+                    console.info('Whiskies loaded:', whiskies);
+                } else {
+                    updateWhiskyList(whiskies, totalAmount);
+                    console.info('Filtered whiskies count:', whiskies.length);
+                }
+            } catch (error) {
+                console.error('Error fetching whiskies:', error);
+                console.error('Error details:', error.message);
+                updateWhiskyList([], 0);
             }
-            if (selectedRegion) {
-                whiskyQuery = query(whiskyQuery, where('region', '==', selectedRegion.id));
-            }
-            if (selectedSeries) {
-                whiskyQuery = query(whiskyQuery, where('series', '==', selectedSeries.id));
-            }
-            if (selectedBottler) {
-                whiskyQuery = query(whiskyQuery, where('bottler', '==', selectedBottler.id));
-            }
-            if (status) {
-                whiskyQuery = query(whiskyQuery, where('status', '==', status));
-            }
-            
-            const snapshot = await getDocs(whiskyQuery);
-            if (!selectedBottler && !selectedDistillery && !selectedRegion && !selectedSeries && !status) {
-                // If no filters are set, we can use the total amount of whiskies and store it for later use
-                setTotalAmount(snapshot.size);
-                updateFunction.updateWhiskyList(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })), snapshot.size);
-            } else {
-                updateFunction.updateWhiskyList(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })), totalAmount);
-            }
-            
         };
         fetchWhiskies();
     }, [selectedDistillery, selectedRegion, selectedSeries, selectedBottler, status]);
@@ -217,8 +252,6 @@ const WhiskyFilter = (updateFunction) => {
                                     setStatus(newValue || '');
                                 }}
                                 renderInput={(params) => <TextField {...params} label="Status" />}
-                                clearOnEscape
-                                isClearable
                             />
                         </Grid>
                         <Grid item xs={12} md={6}>

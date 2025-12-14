@@ -1,7 +1,6 @@
 // src/AuthContext.js
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { app } from './firebase'; // Import app from firebase.js
+import { account } from './appwrite'; // Import account from appwrite.js
 
 const AuthContext = createContext();
 
@@ -13,24 +12,39 @@ export const AuthProvider = ({ children }) => {
     const [currentUser, setCurrentUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    const auth = getAuth(app);
-
-    const login = (email, password) => {
-        return signInWithEmailAndPassword(auth, email, password);
+    const login = async (email, password) => {
+        try {
+            return await account.createEmailPasswordSession({ email, password });
+        } catch (error) {
+            console.error("Login error:", error);
+            throw error;
+        }
     };
 
-    const logout = () => {
-        return signOut(auth);
+    const logout = async () => {
+        try {
+            await account.deleteSession('current');
+            setCurrentUser(null);
+        } catch (error) {
+            console.error("Logout error:", error);
+            throw error;
+        }
+    };
+
+    const getCurrentUser = async () => {
+        try {
+            const user = await account.get();
+            setCurrentUser(user);
+            setLoading(false);
+        } catch (error) {
+            setCurrentUser(null);
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            setCurrentUser(user);
-            setLoading(false);
-        });
-
-        return unsubscribe;
-    }, [auth]);
+        getCurrentUser();
+    }, []);
 
     const value = {
         currentUser,

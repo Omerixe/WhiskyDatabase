@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchDistilleries } from '../../firebase';
+import { fetchDistilleries } from '../../appwrite';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 
@@ -13,6 +13,7 @@ const DistilleryInput = ({ freeInputAllowed, inputDistillery, region, handleDist
     }, [region]);
 
     useEffect(() => {
+        console.log('Input distillery changed:', inputDistillery);
         if (inputDistillery) {
             if (inputDistillery.id) {
                 setDistillery(inputDistillery);
@@ -26,11 +27,16 @@ const DistilleryInput = ({ freeInputAllowed, inputDistillery, region, handleDist
     }, [inputDistillery])
 
     const loadDistilleries = async (region = undefined) => {
-        const regionId = region ? region.id ? region.id : region: undefined;
-        const loadedDistilleries = await fetchDistilleries(regionId, setDistilleries);
-        setDistilleries(loadedDistilleries);
-        if (regionId && selectedDistillery && !loadedDistilleries.some(distillery => distillery.id === selectedDistillery.id)) {
-            resetDistillery();
+        try {
+            const regionId = region ? (region.id ? region.id : region) : undefined;
+            const loadedDistilleries = await fetchDistilleries(regionId);
+            setDistilleries(loadedDistilleries);
+            if (regionId && selectedDistillery && !loadedDistilleries.some(distillery => distillery.id === selectedDistillery.id)) {
+                resetDistillery();
+            }
+        } catch (error) {
+            console.error('Error loading distilleries:', error);
+            setDistilleries([]);
         }
     };
 

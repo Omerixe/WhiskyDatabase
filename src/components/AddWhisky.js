@@ -1,8 +1,7 @@
 // src/components/AddWhisky.js
 import React, { useState, useEffect } from 'react';
-import { db, storage, addWhisky } from '../firebase';
-import { setDoc, doc, updateDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { addWhisky, createDocument, updateDocument, uploadFile, getFileUrl, COLLECTIONS } from '../appwrite';
+import { slugify } from '../utils/slugify';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
@@ -43,10 +42,23 @@ const AddWhisky = ({ whisky, editingDone }) => {
             setBottleNo(whisky.bottleNo ? whisky.bottleNo : '');
             setStatus(whisky.status ? whisky.status : '');
             setComment(whisky.comment ? whisky.comment : '');
-            setBottler(whisky.bottler ? whisky.bottler : '');
-            setSeries(whisky.series ? whisky.series : '');
-            setRegion(whisky.region ? whisky.region : null);
-            setDistillery(whisky.distillery ? whisky.distillery : null);
+            
+            // Handle both old and new foreign key patterns
+            const bottlerData = whisky.bottler ? 
+                (whisky.bottler_name ? { id: whisky.bottler, name: whisky.bottler_name } : whisky.bottler) : '';
+            const seriesData = whisky.series ? 
+                (whisky.series_name ? { id: whisky.series, name: whisky.series_name } : whisky.series) : '';
+            const regionData = whisky.region ? 
+                (whisky.region_name ? { id: whisky.region, name: whisky.region_name } : whisky.region) : null;
+            const distilleryData = whisky.distillery ? 
+                (whisky.distillery_name ? { id: whisky.distillery, name: whisky.distillery_name } : whisky.distillery) : null;
+            
+
+
+            setBottler(bottlerData);
+            setSeries(seriesData);
+            setRegion(regionData);
+            setDistillery(distilleryData);
             setImagePreviewUrl(whisky.imageUrl ? whisky.imageUrl : '');
         }
     }, [whisky]);
@@ -66,88 +78,114 @@ const AddWhisky = ({ whisky, editingDone }) => {
         }
     };
 
-    useEffect(() => {
-        console.log("Region changed", region);
-    }, [region]);
-
     const handleSubmit = async () => {
-        let distilleryId = distillery.id ? distillery.id : null;
-        let regionId = region.id ? region.id : null;
-        let seriesId = series.id ? series.id : null;
-        let bottlerId = bottler.id ? bottler.id : null;
+        try {
+            // Handle both object {id, name} and string inputs
+            let distilleryId = distillery?.id || null;
+            let distilleryName = distillery?.name || (typeof distillery === 'string' ? distillery : null);
+            let regionId = region?.id || null;
+            let regionName = region?.name || (typeof region === 'string' ? region : null);
+            let seriesId = series?.id || null;
+            let seriesName = series?.name || (typeof series === 'string' ? series : null);
+            let bottlerId = bottler?.id || null;
+            let bottlerName = bottler?.name || (typeof bottler === 'string' ? bottler : null);
 
-        if (!distilleryId && distillery) {
-            // Add the new distillery to Firestore
-            await setDoc(doc(db, 'distilleries', distillery), { name: distillery, region: region });
-            distilleryId = distillery;
-        }
+            // Create new entities if they don't exist, using slugified IDs
+            if (!regionId && region) {
+                const newRegion = await createDocument(
+                    COLLECTIONS.REGIONS,
+                    slugify(regionName),
+                    { name: regionName }
+                );
+                console.info('Created new region:', newRegion);
+                regionId = newRegion.$id;
+            }
 
-        if (!regionId && region) {
-            // Add the new region to Firestore
-            await setDoc(doc(db, 'regions', region), { name: region });
-            regionId = region;
-        }
+            if (!distilleryId && distillery) {
+                const newDistillery = await createDocument(
+                    COLLECTIONS.DISTILLERIES,
+                    slugify(distilleryName),
+                    { 
+                        name: distilleryName,
+                        region: regionId,
+                        region_name: regionName
+                    }
+                );
+                distilleryId = newDistillery.$id;
+            }
 
-        if (!seriesId && series) {
-            // Add the new series to Firestore
-            await setDoc(doc(db, 'series', series), { name: series });
-            seriesId = series;
-        }
+            if (!seriesId && series) {
+                const newSeries = await createDocument(
+                    COLLECTIONS.SERIES,
+                    slugify(seriesName),
+                    { name: seriesName }
+                );
+                seriesId = newSeries.$id;
+            }
 
-        if (!bottlerId && bottler) {
-            // Add the new bottler to Firestore
-            await setDoc(doc(db, 'bottlers', bottler), { name: bottler });
-            bottlerId = bottler;
-        }
+            if (!bottlerId && bottler) {
+                const newBottler = await createDocument(
+                    COLLECTIONS.BOTTLERS,
+                    slugify(bottlerName),
+                    { name: bottlerName }
+                );
+                bottlerId = newBottler.$id;
+            }
 
-        let imageUrl = '';
-        if (image) {
-            const storageRef = ref(storage, `whiskies/${image.name}`);
-            await uploadBytes(storageRef, image);
-            imageUrl = await getDownloadURL(storageRef);
-        } else if (whisky.imageUrl) {
-            imageUrl = whisky.imageUrl;
-        }
+            let imageUrl = '';
+            if (image) {
+                const uploadedFile = await uploadFile(image);
+                imageUrl = getFileUrl(uploadedFile.$id);
+            } else if (whisky?.imageUrl) {
+                imageUrl = whisky.imageUrl;
+            }
 
-        const newWhisky = {
-            age: parseInt(age),
-            distillery: distilleryId,
-            region: regionId,
-            imageUrl,
-            abv: parseFloat(abv),
-            distilledDate: distilledDate ? formatDateToYYYYMMDD(distilledDate) : null,
-            bottledDate: bottledDate ? formatDateToYYYYMMDD(bottledDate) : null,
-            barrelNo,
-            bottleNo,
-            status,
-            comment,
-            bottler,
-            series,
-            creationDate: formatDateToYYYYMMDD(whisky ? whisky.creationDate : Date.now()),
-            lastUpdateDate: formatDateToYYYYMMDD(Date.now()),
-        };
+            const newWhisky = {
+                age: parseInt(age) || null,
+                distillery: distilleryId,
+                distillery_name: distilleryName,
+                region: regionId,
+                region_name: regionName,
+                bottler: bottlerId,
+                bottler_name: bottlerName,
+                series: seriesId,
+                series_name: seriesName,
+                imageUrl,
+                abv: parseFloat(abv),
+                distilledDate: distilledDate ? formatDateToYYYYMMDD(distilledDate) : null,
+                bottledDate: bottledDate ? formatDateToYYYYMMDD(bottledDate) : null,
+                barrelNo,
+                bottleNo: bottleNo ? parseInt(bottleNo) : null,
+                status,
+                comment,
+                creationDate: formatDateToYYYYMMDD(whisky ? whisky.creationDate : Date.now()),
+                lastUpdateDate: formatDateToYYYYMMDD(Date.now()),
+            };
 
-        if (editingDone) {
-            const docRef = doc(db, 'whiskies', whisky.id);
-            await updateDoc(docRef, newWhisky);
-            editingDone();
-        } else {
-            await addWhisky(newWhisky);
+            if (editingDone) {
+                await updateDocument(COLLECTIONS.WHISKIES, whisky.id, newWhisky);
+                editingDone();
+            } else {
+                await addWhisky(newWhisky);
 
-            setAge('');
-            setDistillery(null);
-            setRegion(null);
-            setImage(null);
-            setImagePreviewUrl('');
-            setAbv('');
-            setDistilledDate('');
-            setBottledDate('');
-            setBarrelNo('');
-            setBottleNo('');
-            setStatus('');
-            setComment('');
-            setBottler('');
-            setSeries('');
+                // Reset form
+                setAge('');
+                setDistillery(null);
+                setRegion(null);
+                setImage(null);
+                setImagePreviewUrl('');
+                setAbv('');
+                setDistilledDate('');
+                setBottledDate('');
+                setBarrelNo('');
+                setBottleNo('');
+                setStatus('');
+                setComment('');
+                setBottler('');
+                setSeries('');
+            }
+        } catch (error) {
+            console.error('Error submitting whisky:', error);
         }
     };
 

@@ -1,8 +1,7 @@
 // src/components/WhiskyDetail.js
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { db } from '../../firebase';
-import { doc, getDoc, deleteDoc } from 'firebase/firestore';
+import { getDocument, deleteDocument, COLLECTIONS } from '../../appwrite';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -23,12 +22,11 @@ const WhiskyDetail = () => {
 
 
     const fetchWhisky = async () => {
-        const docRef = doc(db, 'whiskies', id);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-            setWhisky({ id: docSnap.id, ...docSnap.data() });
-        } else {
-            console.error("No such document!");
+        try {
+            const whiskieData = await getDocument(COLLECTIONS.WHISKIES, id);
+            setWhisky(whiskieData);
+        } catch (error) {
+            console.error("Error fetching whisky:", error);
         }
     };
 
@@ -46,10 +44,13 @@ const WhiskyDetail = () => {
     };
 
     const handleDeleteClick = async () => {
-        //Todo: Delete image as well
-        const docRef = doc(db, 'whiskies', id);
-        await deleteDoc(docRef);
-        navigate('/');
+        try {
+            //Todo: Delete image as well
+            await deleteDocument(COLLECTIONS.WHISKIES, id);
+            navigate('/');
+        } catch (error) {
+            console.error("Error deleting whisky:", error);
+        }
     };
 
     const handleImageClick = () => {
@@ -87,14 +88,14 @@ const WhiskyDetail = () => {
                                     component="img"
                                     sx={{ height: 300, objectFit: 'cover' }}
                                     image={whisky.imageUrl ? whisky.imageUrl : placeholderImage}
-                                    alt={`Image of ${whisky.distillery}`}
+                                    alt={`Image of ${whisky.distillery_name || whisky.distillery}`}
                                 />
                             </Box>
 
                             <Dialog open={open} onClose={handleClose} maxWidth="sm">
                                 <img
                                     src={whisky.imageUrl ? whisky.imageUrl : placeholderImage}
-                                    alt={`Full view of ${whisky.distillery}`}
+                                    alt={`Full view of ${whisky.distillery_name || whisky.distillery}`}
                                     style={{ width: '100%', height: 'auto' }}
                                 />
                             </Dialog>
@@ -102,20 +103,20 @@ const WhiskyDetail = () => {
 
                         <CardContent>
                             <Typography variant="h4" component="div" gutterBottom>
-                                {whisky.distillery} {whisky.series && `- ${whisky.series}`} {whisky.bottler && `- ${whisky.bottler}`}
+                                {whisky.distillery_name || whisky.distillery} {(whisky.series_name || whisky.series) && `- ${whisky.series_name || whisky.series}`} {(whisky.bottler_name || whisky.bottler) && `- ${whisky.bottler_name || whisky.bottler}`}
                             </Typography>
 
                             <Divider sx={{ mb: 2 }} />
 
                             <Typography variant="h5" color="text.secondary" gutterBottom>Basisinformationen</Typography>
-                            <Typography variant="body" color="text.primary" component="p">Destillerie: {whisky.distillery}</Typography>
-                            <Typography variant="body" color="text.primary" component="p">Region: {whisky.region}</Typography>
+                            <Typography variant="body" color="text.primary" component="p">Destillerie: {whisky.distillery_name || whisky.distillery}</Typography>
+                            <Typography variant="body" color="text.primary" component="p">Region: {whisky.region_name || whisky.region}</Typography>
                             <Typography variant="body" color="text.primary" component="p">Alter: {whisky.age || "N/A"}</Typography>
                             <Typography variant="body" color="text.primary" component="p">Alc. Vol: {whisky.abv}%</Typography>
 
                             <Typography variant="h5" color="text.secondary" gutterBottom sx={{ mt: 3 }}>Zusätzliche Informationen zur Abfüllung</Typography>
-                            {whisky.bottler && <Typography variant="body" color="text.primary" component="p">Abfüller: {whisky.bottler}</Typography>}
-                            {whisky.series && <Typography variant="body" color="text.primary" component="p">Serie: {whisky.series}</Typography>}
+                            {(whisky.bottler_name || whisky.bottler) && <Typography variant="body" color="text.primary" component="p">Abfüller: {whisky.bottler_name || whisky.bottler}</Typography>}
+                            {(whisky.series_name || whisky.series) && <Typography variant="body" color="text.primary" component="p">Serie: {whisky.series_name || whisky.series}</Typography>}
                             {whisky.distilledDate && <Typography variant="body" color="text.primary" component="p">Destilliert am: {formatDate(whisky.distilledDate)}</Typography>}
                             {whisky.bottledDate && <Typography variant="body" color="text.primary" component="p">Abgefüllt am: {formatDate(whisky.bottledDate)}</Typography>}
                             {whisky.barrelNo && (

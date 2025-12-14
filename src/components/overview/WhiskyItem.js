@@ -12,7 +12,7 @@ const WhiskyItem = ({ whisky }) => (
         <CardMedia
             component="img"
             image={whisky.imageUrl ? whisky.imageUrl : placeholderImage}
-            alt={whisky.imageUrl ? `Image of ${whisky.distillery}` : 'No Image Available'}
+            alt={whisky.imageUrl ? `Image of ${whisky.distillery_name || whisky.distillery}` : 'No Image Available'}
             sx={{
                 width: '100%',
                 height: '180px',
@@ -23,7 +23,7 @@ const WhiskyItem = ({ whisky }) => (
 
         <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
             <Typography variant="h5" component="div">
-                {whisky.distillery} {whisky.series ? " - " + whisky.series : ""} {whisky.bottler ? " - " + whisky.bottler : ""}
+                {whisky.distillery_name || whisky.distillery} {whisky.series_name || whisky.series ? " - " + (whisky.series_name || whisky.series) : ""} {whisky.bottler_name || whisky.bottler ? " - " + (whisky.bottler_name || whisky.bottler) : ""}
             </Typography>
 
             {/* Spacer that pushes age and region to the bottom */}
@@ -36,7 +36,7 @@ const WhiskyItem = ({ whisky }) => (
             >
                 <span>{whisky.age ? whisky.age + " Jahre" : "N/A"}</span>
                 <span>{whisky.abv}%</span>
-                <span>{whisky.region}</span>
+                <span>{whisky.region_name || whisky.region}</span>
             </Typography>
         </CardContent>
     </Card>

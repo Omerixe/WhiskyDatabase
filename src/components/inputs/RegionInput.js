@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../../firebase';
-import { collection, getDocs} from 'firebase/firestore';
+import { fetchCollection, COLLECTIONS } from '../../appwrite';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 
@@ -11,8 +10,13 @@ const RegionInput = ({ freeInputAllowed, inputRegion, handleRegionChange }) => {
 
     useEffect(() => {
         const fetchRegions = async () => {
-            const snapshot = await getDocs(collection(db, 'regions'));
-            setRegions(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+            try {
+                const loadedRegions = await fetchCollection(COLLECTIONS.REGIONS);
+                setRegions(loadedRegions);
+            } catch (error) {
+                console.error('Error loading regions:', error);
+                setRegions([]);
+            }
         }
         fetchRegions();
     }, []);

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../../firebase';
-import { collection, getDocs} from 'firebase/firestore';
+import { fetchCollection, COLLECTIONS } from '../../appwrite';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 
@@ -11,8 +10,13 @@ const SeriesInput = ({ freeInputAllowed, inputSeries, handleSeriesChange }) => {
 
     useEffect(() => {
         const fetchSeries = async () => {
-            const snapshot = await getDocs(collection(db, 'series'));
-            setAllSeries(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+            try {
+                const loadedSeries = await fetchCollection(COLLECTIONS.SERIES);
+                setAllSeries(loadedSeries);
+            } catch (error) {
+                console.error('Error loading series:', error);
+                setAllSeries([]);
+            }
         }
         fetchSeries();
     }, []);
