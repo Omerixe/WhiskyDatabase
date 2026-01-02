@@ -66,8 +66,12 @@ const AddWhisky = ({ whisky, editingDone }) => {
     const handleDistilleryChange = (distillery) => {
         setDistillery(distillery);
         const distilleryId = distillery ? (distillery.id ? distillery.id : null) : null;
-        if (distilleryId) {
-            setRegion(distillery.region);
+        if (distilleryId && distillery.region) {
+            // Set region as proper object with id and name, not just the ID string
+            setRegion({
+                id: distillery.region,
+                name: distillery.region_name
+            });
         }
     }
 

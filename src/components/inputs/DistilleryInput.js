@@ -53,7 +53,7 @@ const DistilleryInput = ({ freeInputAllowed, inputDistillery, region, handleDist
             renderInput={(params) => <TextField {...params} label="Destillerie" required />}
             freeSolo={freeInputAllowed}
             inputValue={newDistillery}
-            onInputChange={(_, newInputValue) => handleDistilleryChange(newInputValue)}
+            onInputChange={(_, newInputValue) => setNewDistillery(newInputValue)}
         />
     );
 };

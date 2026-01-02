@@ -48,7 +48,7 @@ const RegionInput = ({ freeInputAllowed, inputRegion, handleRegionChange }) => {
             renderInput={(params) => <TextField {...params} label="Region" required/>}
             freeSolo={freeInputAllowed}
             inputValue={newRegion}
-            onInputChange={(_, newInputValue) => handleRegionChange(newInputValue)}
+            onInputChange={(_, newInputValue) => setNewRegion(newInputValue)}
         />
     );
 };

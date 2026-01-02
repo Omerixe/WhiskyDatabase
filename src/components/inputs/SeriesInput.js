@@ -48,7 +48,7 @@ const SeriesInput = ({ freeInputAllowed, inputSeries, handleSeriesChange }) => {
             renderInput={(params) => <TextField {...params} label="Serie" />}
             freeSolo={freeInputAllowed}
             inputValue={newSeries}
-            onInputChange={(_, newInputValue) => handleSeriesChange(newInputValue)}
+            onInputChange={(_, newInputValue) => setNewSeries(newInputValue)}
         />
     );
 };

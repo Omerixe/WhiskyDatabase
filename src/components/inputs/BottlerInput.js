@@ -48,7 +48,7 @@ const BottlerInput = ({ freeInputAllowed, inputBottler, handleBottlerChange }) =
             renderInput={(params) => <TextField {...params} label="Abfüller" />}
             freeSolo={freeInputAllowed}
             inputValue={newBottler}
-            onInputChange={(_, newInputValue) => handleBottlerChange(newInputValue)}
+            onInputChange={(_, newInputValue) => setNewBottler(newInputValue)}
         />
     );
 };
