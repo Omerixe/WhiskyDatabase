@@ -44,11 +44,26 @@ const SeriesInput = ({ freeInputAllowed, inputSeries, handleSeriesChange }) => {
             options={allSeries}
             getOptionLabel={(option) => option.name}
             value={selectedSeries}
-            onChange={(_, newValue) => handleSeriesChange(newValue)}
+            onChange={(_, newValue) => {
+                handleSeriesChange(newValue);
+            }}
             renderInput={(params) => <TextField {...params} label="Serie" />}
             freeSolo={freeInputAllowed}
             inputValue={newSeries}
-            onInputChange={(_, newInputValue) => setNewSeries(newInputValue)}
+            onInputChange={(_, newInputValue) => {
+                setNewSeries(newInputValue);
+                // In freeSolo mode, notify parent of text changes
+                if (freeInputAllowed && newInputValue) {
+                    // If user is typing something different from the selected option, clear selection
+                    if (selectedSeries && newInputValue !== selectedSeries.name) {
+                        setSelectedSeries(null);
+                    }
+                    // Always notify parent so new entities can be created or selection updated
+                    if (!selectedSeries || newInputValue !== selectedSeries.name) {
+                        handleSeriesChange(newInputValue);
+                    }
+                }
+            }}
         />
     );
 };

@@ -44,11 +44,26 @@ const BottlerInput = ({ freeInputAllowed, inputBottler, handleBottlerChange }) =
             options={allBottlers}
             getOptionLabel={(option) => option.name}
             value={selectedBottler}
-            onChange={(_, newValue) => handleBottlerChange(newValue)}
+            onChange={(_, newValue) => {
+                handleBottlerChange(newValue);
+            }}
             renderInput={(params) => <TextField {...params} label="Abfüller" />}
             freeSolo={freeInputAllowed}
             inputValue={newBottler}
-            onInputChange={(_, newInputValue) => setNewBottler(newInputValue)}
+            onInputChange={(_, newInputValue) => {
+                setNewBottler(newInputValue);
+                // In freeSolo mode, notify parent of text changes
+                if (freeInputAllowed && newInputValue) {
+                    // If user is typing something different from the selected option, clear selection
+                    if (selectedBottler && newInputValue !== selectedBottler.name) {
+                        setSelectedBottler(null);
+                    }
+                    // Always notify parent so new entities can be created or selection updated
+                    if (!selectedBottler || newInputValue !== selectedBottler.name) {
+                        handleBottlerChange(newInputValue);
+                    }
+                }
+            }}
         />
     );
 };

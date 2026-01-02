@@ -44,11 +44,26 @@ const RegionInput = ({ freeInputAllowed, inputRegion, handleRegionChange }) => {
             options={regions}
             getOptionLabel={(option) => option.name}
             value={selectedRegion}
-            onChange={(_, newValue) => handleRegionChange(newValue)}
+            onChange={(_, newValue) => {
+                handleRegionChange(newValue);
+            }}
             renderInput={(params) => <TextField {...params} label="Region" required/>}
             freeSolo={freeInputAllowed}
             inputValue={newRegion}
-            onInputChange={(_, newInputValue) => setNewRegion(newInputValue)}
+            onInputChange={(_, newInputValue) => {
+                setNewRegion(newInputValue);
+                // In freeSolo mode, notify parent of text changes
+                if (freeInputAllowed && newInputValue) {
+                    // If user is typing something different from the selected option, clear selection
+                    if (selectedRegion && newInputValue !== selectedRegion.name) {
+                        setSelectedRegion(null);
+                    }
+                    // Always notify parent so new entities can be created or selection updated
+                    if (!selectedRegion || newInputValue !== selectedRegion.name) {
+                        handleRegionChange(newInputValue);
+                    }
+                }
+            }}
         />
     );
 };

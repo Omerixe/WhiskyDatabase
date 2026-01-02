@@ -49,11 +49,26 @@ const DistilleryInput = ({ freeInputAllowed, inputDistillery, region, handleDist
             options={distilleries}
             getOptionLabel={(option) => option.name}
             value={selectedDistillery}
-            onChange={(_, newValue) => handleDistilleryChange(newValue)}
+            onChange={(_, newValue) => {
+                handleDistilleryChange(newValue);
+            }}
             renderInput={(params) => <TextField {...params} label="Destillerie" required />}
             freeSolo={freeInputAllowed}
             inputValue={newDistillery}
-            onInputChange={(_, newInputValue) => setNewDistillery(newInputValue)}
+            onInputChange={(_, newInputValue) => {
+                setNewDistillery(newInputValue);
+                // In freeSolo mode, notify parent of text changes
+                if (freeInputAllowed && newInputValue) {
+                    // If user is typing something different from the selected option, clear selection
+                    if (selectedDistillery && newInputValue !== selectedDistillery.name) {
+                        setDistillery(null);
+                    }
+                    // Always notify parent so new entities can be created or selection updated
+                    if (!selectedDistillery || newInputValue !== selectedDistillery.name) {
+                        handleDistilleryChange(newInputValue);
+                    }
+                }
+            }}
         />
     );
 };
