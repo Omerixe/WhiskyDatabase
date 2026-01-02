@@ -49,12 +49,25 @@ const fetchDistilleries = async (region = undefined) => {
             queries.push(Query.equal('region', region));
         }
         
-        const response = await databases.listDocuments(
-            DATABASE_ID,
-            COLLECTIONS.DISTILLERIES,
-            queries
-        );
-        return response.documents.map(doc => ({ id: doc.$id, ...doc }));
+        let allDistilleries = [];
+        let offset = 0;
+        const limit = 25;
+        let hasMore = true;
+
+        while (hasMore) {
+            const paginatedQueries = [...queries, Query.limit(limit), Query.offset(offset)];
+            const response = await databases.listDocuments(
+                DATABASE_ID,
+                COLLECTIONS.DISTILLERIES,
+                paginatedQueries
+            );
+            
+            allDistilleries = allDistilleries.concat(response.documents);
+            hasMore = response.documents.length === limit;
+            offset += limit;
+        }
+
+        return allDistilleries.map(doc => ({ id: doc.$id, ...doc }));
     } catch (error) {
         console.error("Error fetching distilleries: ", error);
         throw error;
@@ -63,11 +76,24 @@ const fetchDistilleries = async (region = undefined) => {
 
 const fetchCollection = async (collectionName) => {
     try {
-        const response = await databases.listDocuments(
-            DATABASE_ID,
-            collectionName
-        );
-        return response.documents.map(doc => ({ id: doc.$id, ...doc }));
+        let allDocuments = [];
+        let offset = 0;
+        const limit = 25;
+        let hasMore = true;
+
+        while (hasMore) {
+            const response = await databases.listDocuments(
+                DATABASE_ID,
+                collectionName,
+                [Query.limit(limit), Query.offset(offset)]
+            );
+            
+            allDocuments = allDocuments.concat(response.documents);
+            hasMore = response.documents.length === limit;
+            offset += limit;
+        }
+
+        return allDocuments.map(doc => ({ id: doc.$id, ...doc }));
     } catch (error) {
         console.error(`Error fetching ${collectionName}: `, error);
         throw error;
