@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { fetchDistilleries } from '../../appwrite';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -8,9 +8,23 @@ const DistilleryInput = ({ freeInputAllowed, inputDistillery, region, handleDist
     const [selectedDistillery, setDistillery] = useState(null);
     const [newDistillery, setNewDistillery] = useState('');
 
+    const loadDistilleries = useCallback(async (region = undefined) => {
+        try {
+            const regionId = region ? (region.id ? region.id : region) : undefined;
+            const loadedDistilleries = await fetchDistilleries(regionId);
+            setDistilleries(loadedDistilleries);
+            if (regionId && selectedDistillery && !loadedDistilleries.some(distillery => distillery.id === selectedDistillery.id)) {
+                setNewDistillery('');
+            }
+        } catch (error) {
+            console.error('Error loading distilleries:', error);
+            setDistilleries([]);
+        }
+    }, [selectedDistillery]);
+
     useEffect(() => {
         loadDistilleries(region);
-    }, [region]);
+    }, [region, loadDistilleries]);
 
     useEffect(() => {
         console.log('Input distillery changed:', inputDistillery);
@@ -25,24 +39,6 @@ const DistilleryInput = ({ freeInputAllowed, inputDistillery, region, handleDist
             setNewDistillery('')
         }
     }, [inputDistillery])
-
-    const loadDistilleries = async (region = undefined) => {
-        try {
-            const regionId = region ? (region.id ? region.id : region) : undefined;
-            const loadedDistilleries = await fetchDistilleries(regionId);
-            setDistilleries(loadedDistilleries);
-            if (regionId && selectedDistillery && !loadedDistilleries.some(distillery => distillery.id === selectedDistillery.id)) {
-                resetDistillery();
-            }
-        } catch (error) {
-            console.error('Error loading distilleries:', error);
-            setDistilleries([]);
-        }
-    };
-
-    const resetDistillery = () => {
-        setNewDistillery('');
-    };
 
     return (
         <Autocomplete

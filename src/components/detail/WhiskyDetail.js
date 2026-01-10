@@ -1,5 +1,5 @@
 // src/components/WhiskyDetail.js
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getDocument, deleteDocument, COLLECTIONS } from '../../appwrite';
 import Card from '@mui/material/Card';
@@ -21,18 +21,18 @@ const WhiskyDetail = () => {
     const [open, setOpen] = useState(false);
 
 
-    const fetchWhisky = async () => {
+    const fetchWhisky = useCallback(async () => {
         try {
             const whiskieData = await getDocument(COLLECTIONS.WHISKIES, id);
             setWhisky(whiskieData);
         } catch (error) {
             console.error("Error fetching whisky:", error);
         }
-    };
+    }, [id]);
 
     useEffect(() => {
         fetchWhisky();
-    }, [id]);
+    }, [fetchWhisky]);
 
     const handleEditClick = () => {
         setIsEditing(true);

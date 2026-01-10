@@ -356,7 +356,7 @@ const AddWhisky = ({ whisky, editingDone }) => {
                         {imagePreviewUrl && (
                             <img
                                 src={imagePreviewUrl}
-                                alt="Image Preview"
+                                alt="Preview"
                                 style={{
                                     maxWidth: '100%',
                                     maxHeight: '300px',

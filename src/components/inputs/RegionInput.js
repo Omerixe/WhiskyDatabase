@@ -37,7 +37,7 @@ const RegionInput = ({ freeInputAllowed, inputRegion, handleRegionChange }) => {
             setNewRegion('');
             setSelectedRegion(null);
         }
-    }, [inputRegion]);
+    }, [inputRegion, regions]);
 
     return (
         <Autocomplete

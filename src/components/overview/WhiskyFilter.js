@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { fetchDistilleries, fetchCollection, tablesDB, DATABASE_ID, COLLECTIONS, Query } from '../../appwrite';
 import Grid from '@mui/material/GridLegacy';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { statusConstants } from '../../constants';
-import MenuItem from     '@mui/material/MenuItem';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionSummary, AccordionDetails, Typography, Box } from '@mui/material';
 
 const WhiskyFilter = ({ updateWhiskyList, loadMoreRef, setIsLoading }) => {
     const PAGE_SIZE = 20;
-    const [totalAmount, setTotalAmount] = useState(null);
+    const totalAmountRef = useRef(null);
     const [currentOffset, setCurrentOffset] = useState(0);
     const [distilleries, setDistilleries] = useState([]);
     const [selectedDistillery, setSelectedDistillery] = useState(() => {
@@ -37,10 +36,16 @@ const WhiskyFilter = ({ updateWhiskyList, loadMoreRef, setIsLoading }) => {
         return sessionStorage.getItem('accordionOpen') === 'true';
     });
 
+    const loadDistilleries = useCallback(async (region = undefined) => {
+        const loadeddistilleries = await fetchDistilleries(region);
+        setDistilleries(loadeddistilleries);
+    }, []);
+
     useEffect(() => {
         loadDistilleries();
         // Fetch total count on mount so it's always available
         fetchTotalCount();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const fetchTotalCount = async () => {
@@ -51,17 +56,9 @@ const WhiskyFilter = ({ updateWhiskyList, loadMoreRef, setIsLoading }) => {
                 queries: [Query.limit(1)],
                 total: true
             });
-            setTotalAmount(response.total);
+            totalAmountRef.current = response.total;
         } catch (error) {
             console.error('Error fetching total count:', error);
-        }
-    };
-
-    const loadDistilleries = async (region = undefined) => {
-        const loadeddistilleries = await fetchDistilleries(region);
-        setDistilleries(loadeddistilleries);
-        if (region && !loadeddistilleries.includes(selectedDistillery)) {
-            setSelectedDistillery(null);
         }
     };
 
@@ -106,7 +103,7 @@ const WhiskyFilter = ({ updateWhiskyList, loadMoreRef, setIsLoading }) => {
         fetchBottlers();
     }, []);
 
-    const fetchWhiskies = async (offset = 0, isInitial = true) => {
+    const fetchWhiskies = useCallback(async (offset = 0, isInitial = true) => {
         try {
             let queries = [];
             
@@ -143,21 +140,21 @@ const WhiskyFilter = ({ updateWhiskyList, loadMoreRef, setIsLoading }) => {
             
             if (!selectedBottler && !selectedDistillery && !selectedRegion && !selectedSeries && !status) {
                 // If no filters are set, store total amount
-                setTotalAmount(response.total);
+                totalAmountRef.current = response.total;
                 updateWhiskyList(whiskies, response.total, response.total, hasMore, isInitial);
                 console.info('Total whiskies without filters:', response.total);
                 console.info('Whiskies loaded:', whiskies.length);
             } else {
                 // Filters are active: pass filtered total and database total separately
-                updateWhiskyList(whiskies, response.total, totalAmount, hasMore, isInitial);
+                updateWhiskyList(whiskies, response.total, totalAmountRef.current, hasMore, isInitial);
                 console.info('Filtered whiskies count:', response.total);
             }
         } catch (error) {
             console.error('Error fetching whiskies:', error);
             console.error('Error details:', error.message);
-            updateWhiskyList([], 0, totalAmount || 0, false, isInitial);
+            updateWhiskyList([], 0, totalAmountRef.current || 0, false, isInitial);
         }
-    };
+    }, [selectedDistillery, selectedRegion, selectedSeries, selectedBottler, status, updateWhiskyList]);
 
     // Expose loadMore function to parent via ref
     useEffect(() => {
@@ -168,13 +165,15 @@ const WhiskyFilter = ({ updateWhiskyList, loadMoreRef, setIsLoading }) => {
                 fetchWhiskies(newOffset, false);
             };
         }
-    }, [currentOffset, selectedDistillery, selectedRegion, selectedSeries, selectedBottler, status]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentOffset]);
 
     // Reset to page 1 and fetch initial data when filters change
     useEffect(() => {
         setCurrentOffset(0);
         setIsLoading(true);
         fetchWhiskies(0, true);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedDistillery, selectedRegion, selectedSeries, selectedBottler, status]);
 
     const resetFilters = () => {

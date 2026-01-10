@@ -37,7 +37,7 @@ const BottlerInput = ({ freeInputAllowed, inputBottler, handleBottlerChange }) =
             setNewBottler('');
             setSelectedBottler(null);
         }
-    }, [inputBottler]);
+    }, [inputBottler, allBottlers]);
 
     return (
         <Autocomplete

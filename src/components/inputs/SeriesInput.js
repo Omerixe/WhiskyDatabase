@@ -37,7 +37,7 @@ const SeriesInput = ({ freeInputAllowed, inputSeries, handleSeriesChange }) => {
             setNewSeries('');
             setSelectedSeries(null);
         }
-    }, [inputSeries]);
+    }, [inputSeries, allSeries]);
 
     return (
         <Autocomplete
