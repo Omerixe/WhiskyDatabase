@@ -14,7 +14,9 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, password) => {
         try {
-            return await account.createEmailPasswordSession({ email, password });
+            await account.createEmailPasswordSession({ email, password });
+            const user = await account.get();
+            setCurrentUser(user);
         } catch (error) {
             console.error("Login error:", error);
             throw error;
