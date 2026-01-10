@@ -6,7 +6,7 @@ This is a fun "long weekend" project where I wanted to show my partner how I can
 
 As he wanted to use the app on iOS, Android and desktop I decided to give react another try. I haven't touched it since 2019, and then I only did a nanodegree. The other option would've been Kotlin Multiplatform but it would've taken me more time to set it up and get it right.
 
-The base structure of the project was pretty much created by ChatGPT-4o. Only after a while I decided to implement changes on my own when I was fed up by the slow generation speed of answers. I then only used it for some detailed questions and for transforming the existing data into a format that I can use to feed into Firebase.
+Large Language Models (LLMs) were used to assist with the base structure and transforming data into the appropriate format for the backend.
 
 ## Features
 - Whisky overview that shows all whiskies or those found that match a given filter
@@ -22,25 +22,30 @@ The base structure of the project was pretty much created by ChatGPT-4o. Only af
 
 ## Techstack
 **React** in the frontend as it seemed easy enough to use as a noob and especially easy to host.  
-**Firebase** as my cloud service as it offers what I needed for free and I already used it in some native projects. (I make use of Firestore, Storage and Authentication)
+**Appwrite** as my cloud backend service offering database, storage, and authentication capabilities with a free tier.
 
 ## Setup
 1. Ensure you have Node.js and npm installed. You can download them from nodejs.org.
-2. You need a Firebase instance for your project and set up the following services:
-- Firestore
-- Storage
-- Authentication
+2. Create an Appwrite project at https://cloud.appwrite.io and set up the following:
+- Create a new project
+- Create a database with the following collections: `whiskies`, `distilleries`, `regions`, `series`, `bottlers`
+- Create a storage bucket (e.g., named "whiskies")
+- Enable Email/Password authentication
 
-Create an `.env` file with the following values (coming from your firebase config)
+3. Add your development platform(s) in Appwrite Console → Settings → Platforms:
+   - For localhost: `http://localhost:3000`
+   - For mobile testing on local network: `http://[YOUR-LOCAL-IP]:3000` (e.g., `http://192.168.1.232:3000`)
+
+4. Create a `.env.local` file with the following values (from your Appwrite project settings):
 ```
-REACT_APP_FIREBASE_API_KEY="[API_KEY]"
-REACT_APP_FIREBASE_AUTH_DOMAIN="[AUTH_DOMAIN]"
-REACT_APP_FIREBASE_PROJECT_ID="[PROJECT_ID]"
-REACT_APP_FIREBASE_STORAGE_BUCKET="[STORAGE_BUCKET]"
-REACT_APP_FIREBASE_MESSAGING_SENDER_ID="[MESSAGING_SENDER_ID]"
-REACT_APP_FIREBASE_APP_ID="[APP_ID]"
+REACT_APP_APPWRITE_ENDPOINT="https://[LOCATION].cloud.appwrite.io/v1"
+REACT_APP_APPWRITE_PROJECT_ID="[YOUR_PROJECT_ID]"
+REACT_APP_APPWRITE_DATABASE_ID="[YOUR_DATABASE_ID]"
+REACT_APP_APPWRITE_STORAGE_BUCKET_ID="[YOUR_BUCKET_ID]"
 ```
-3. Run `npm start` in your project folder
+
+5. Install dependencies: `npm install`
+6. Run the development server: `npm start`
 
 ## Licence
 This project is licensed under the terms of the MIT license.
