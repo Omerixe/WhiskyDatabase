@@ -15,8 +15,11 @@ Configuration via environment variables or a .env file:
     BACKUP_OUTPUT_DIR    - Output base directory (default: ./backups)
 """
 
+from __future__ import annotations
+
 import json
 import os
+import shutil
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -156,7 +159,11 @@ def main() -> None:
     else:
         print("  No files found in bucket.")
 
-    print(f"\nBackup complete: {backup_dir}")
+    # --- Zip the backup directory ---
+    zip_base = str(backup_dir)
+    zip_path = shutil.make_archive(zip_base, "zip", root_dir=backup_dir.parent, base_dir=backup_dir.name)
+    shutil.rmtree(backup_dir)
+    print(f"\nBackup complete: {zip_path}")
 
 
 if __name__ == "__main__":

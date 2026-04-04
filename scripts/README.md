@@ -2,9 +2,11 @@
 
 Downloads all data from the Appwrite whisky-database and saves it locally.
 
-**Output per run** (`backups/whisky-database-backup_YYYY-MM-DD/`):
+**Output per run** (`backups/whisky-database-backup_YYYY-MM-DD.zip`):
 - `data.json` — all documents from all collections
 - `images/` — all files from the storage bucket
+
+The backup directory is automatically zipped after export and the unzipped folder is removed.
 
 ## Setup
 
@@ -25,6 +27,7 @@ cp .env.example .env
 APPWRITE_ENDPOINT=https://fra.cloud.appwrite.io/v1
 APPWRITE_PROJECT_ID=your_project_id
 APPWRITE_API_KEY=your_api_key
+BACKUP_OUTPUT_DIR=./backups
 ```
 
 The API key needs read access to the `whisky-database` database and the `whiskies` storage bucket. Create one in the Appwrite console under **Settings → API Keys**.
